@@ -10,7 +10,7 @@ class Ec::OrdersController < Ec::BaseController
       params[:search][:self_pickup_eq] = 0
       params[:search][:delivery_type_eq] = delivery_type
     end
-    @search = @current_site.ec_orders.search(params[:search])
+    @search = @current_user.ec_orders.search(params[:search])
     @ec_orders = @search.order("created_at desc").page(params[:page])
 
     params[:search][:delivery_type_eq] = params[:search][:self_pickup_eq] == 1 ? 3 : delivery_type
@@ -84,7 +84,7 @@ class Ec::OrdersController < Ec::BaseController
 
   private
   def find_ec_order
-    @ec_order = @current_site.ec_orders.find(params[:id]) rescue nil
+    @ec_order = @current_user.ec_orders.find(params[:id]) rescue nil
     return redirect_to :back, alert: "未找到词订单信息" unless @ec_order
   end
 end

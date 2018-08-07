@@ -16,11 +16,11 @@ class Api::MiniProgram::BaseController < ActionController::Base
     def set_wx_mp_user
       @current_mp_user = WxMpUser.where(app_id: params[:app_id]).first
       raise ActiveRecord::RecordNotFound unless @current_mp_user
-      set_current_site
+      set_current_account
     end
 
-    def set_current_site
-      @current_site = @current_mp_user.try(:site)
+    def set_current_account
+      @current_account = @current_mp_user.try(:account)
       raise ActiveRecord::RecordNotFound unless @current_site
     end
 

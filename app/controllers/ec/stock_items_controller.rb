@@ -4,7 +4,7 @@ class Ec::StockItemsController < Ec::BaseController
   private
 
     def find_stock_item
-      @stock_item = @current_site.ec_stock_items.find(params[:id])
+      @stock_item = @current_user.ec_stock_items.find(params[:id])
     end
 
 end

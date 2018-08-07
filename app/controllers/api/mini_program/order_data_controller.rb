@@ -30,27 +30,27 @@ class Api::MiniProgram::OrderDataController < ApplicationController
       end
     end
 
-    requests = current_site.ec_orders.orders_all.where(created_at: @dates).select("DATE_FORMAT(created_at, '%Y-%m-%d') as dataformat").select("count(*) as counts").group("dataformat")
+    requests = current_account.ec_orders.orders_all.where(created_at: @dates).select("DATE_FORMAT(created_at, '%Y-%m-%d') as dataformat").select("count(*) as counts").group("dataformat")
     requests.each do |r|
       @high_chart["订单数"][r.dataformat.to_s] = r.counts 
     end
 
-    requests = current_site.ec_orders.finished.where(created_at: @dates).select("DATE_FORMAT(created_at, '%Y-%m-%d') as dataformat").select("count(*) as counts").group("dataformat")
+    requests = current_account.ec_orders.finished.where(created_at: @dates).select("DATE_FORMAT(created_at, '%Y-%m-%d') as dataformat").select("count(*) as counts").group("dataformat")
     requests.each do |r|
       @high_chart["已完成"][r.dataformat.to_s] = r.counts 
     end
 
-    requests = current_site.ec_orders.waiting.where(created_at: @dates).select("DATE_FORMAT(created_at, '%Y-%m-%d') as dataformat").select("count(*) as counts").group("dataformat")
+    requests = current_account.ec_orders.waiting.where(created_at: @dates).select("DATE_FORMAT(created_at, '%Y-%m-%d') as dataformat").select("count(*) as counts").group("dataformat")
     requests.each do |r|
       @high_chart["待发货"][r.dataformat.to_s] = r.counts 
     end
 
-    requests = current_site.ec_orders.pending.where(created_at: @dates).select("DATE_FORMAT(created_at, '%Y-%m-%d') as dataformat").select("count(*) as counts").group("dataformat")
+    requests = current_account.ec_orders.pending.where(created_at: @dates).select("DATE_FORMAT(created_at, '%Y-%m-%d') as dataformat").select("count(*) as counts").group("dataformat")
     requests.each do |r|
       @high_chart["待付款"][r.dataformat.to_s] = r.counts 
     end
 
-    requests = current_site.ec_orders.delivered.where(created_at: @dates).select("DATE_FORMAT(created_at, '%Y-%m-%d') as dataformat").select("count(*) as counts").group("dataformat")
+    requests = current_account.ec_orders.delivered.where(created_at: @dates).select("DATE_FORMAT(created_at, '%Y-%m-%d') as dataformat").select("count(*) as counts").group("dataformat")
     requests.each do |r|
       @high_chart["待收货"][r.dataformat.to_s] = r.counts 
     end
@@ -62,7 +62,7 @@ class Api::MiniProgram::OrderDataController < ApplicationController
     end
 
     #销量前5
-    @hot_products = current_site.ec_items.show.select("ec_product_id, sum(sold_qty) as sold").group("ec_product_id").order("sold desc").limit(5)
+    @hot_products = current_account.ec_items.show.select("ec_product_id, sum(sold_qty) as sold").group("ec_product_id").order("sold desc").limit(5)
   end
 
 
@@ -93,28 +93,28 @@ class Api::MiniProgram::OrderDataController < ApplicationController
 
   def set_data
     #总数据
-    @total_orders = current_site.ec_orders.orders_all.count
-    @pending_orders = current_site.ec_orders.pending.count
-    @waiting_orders = current_site.ec_orders.waiting.count
+    @total_orders = current_account.ec_orders.orders_all.count
+    @pending_orders = current_account.ec_orders.pending.count
+    @waiting_orders = current_account.ec_orders.waiting.count
 
     #月
-    @month_total_orders = current_site.ec_orders.orders_all.where(created_at: ((Date.today - 1.month + 1.days)..Date.today)).count
-    @month_waiting_orders = current_site.ec_orders.waiting.where(created_at: ((Date.today - 1.month + 1.days)..Date.today)).count
-    #@month_pending_orders = current_site.ec_orders.pending.where(created_at: ((Date.today - 1.month + 1.days)..Date.today)).count
-    @month_finish_orders = current_site.ec_orders.finished.where(created_at: ((Date.today - 1.month + 1.days)..Date.today)).count
-    @month_delivered_orders = current_site.ec_orders.delivered.where(created_at: ((Date.today - 1.month + 1.days)..Date.today)).count
+    @month_total_orders = current_account.ec_orders.orders_all.where(created_at: ((Date.today - 1.month + 1.days)..Date.today)).count
+    @month_waiting_orders = current_account.ec_orders.waiting.where(created_at: ((Date.today - 1.month + 1.days)..Date.today)).count
+    #@month_pending_orders = current_account.ec_orders.pending.where(created_at: ((Date.today - 1.month + 1.days)..Date.today)).count
+    @month_finish_orders = current_account.ec_orders.finished.where(created_at: ((Date.today - 1.month + 1.days)..Date.today)).count
+    @month_delivered_orders = current_account.ec_orders.delivered.where(created_at: ((Date.today - 1.month + 1.days)..Date.today)).count
 
     #周
-    @seven_total_orders = current_site.ec_orders.orders_all.where(created_at: ((Date.today - 6.days)..Date.today)).count
-    #@seven_pending_orders = current_site.ec_orders.pending.where(created_at: ((Date.today - 6.days)..Date.today)).count    
-    @seven_waiting_orders = current_site.ec_orders.waiting.where(created_at: ((Date.today - 6.days)..Date.today)).count
-    @seven_finish_orders = current_site.ec_orders.finished.where(created_at: ((Date.today - 6.days)..Date.today)).count
-    @seven_delivered_orders = current_site.ec_orders.delivered.where(created_at: ((Date.today - 6.days)..Date.today)).count
+    @seven_total_orders = current_account.ec_orders.orders_all.where(created_at: ((Date.today - 6.days)..Date.today)).count
+    #@seven_pending_orders = current_account.ec_orders.pending.where(created_at: ((Date.today - 6.days)..Date.today)).count    
+    @seven_waiting_orders = current_account.ec_orders.waiting.where(created_at: ((Date.today - 6.days)..Date.today)).count
+    @seven_finish_orders = current_account.ec_orders.finished.where(created_at: ((Date.today - 6.days)..Date.today)).count
+    @seven_delivered_orders = current_account.ec_orders.delivered.where(created_at: ((Date.today - 6.days)..Date.today)).count
 
     # #昨日
-    # @yesterday_total_orders = current_site.ec_orders.orders_all.where(created_at: Date.yesterday..Date.today).count
-    # @yesterday_pending_orders = current_site.ec_orders.pending.where(created_at: Date.yesterday..Date.today).count
-    # @yesterday_waiting_orders = current_site.ec_orders.pending.where(created_at: Date.yesterday..Date.today).count
+    # @yesterday_total_orders = current_account.ec_orders.orders_all.where(created_at: Date.yesterday..Date.today).count
+    # @yesterday_pending_orders = current_account.ec_orders.pending.where(created_at: Date.yesterday..Date.today).count
+    # @yesterday_waiting_orders = current_account.ec_orders.pending.where(created_at: Date.yesterday..Date.today).count
     params[:VCFields] ||= 'message'
   end
 

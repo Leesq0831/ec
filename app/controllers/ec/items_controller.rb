@@ -2,7 +2,7 @@ class Ec::ItemsController < Ec::BaseController
   before_filter :find_item, only: [:show, :update, :destroy]
 
   def index
-    @search = @current_site.ec_items.order('created_at').search(params[:search])
+    @search = @current_user.ec_items.order('created_at').search(params[:search])
   end
 
   def show
@@ -10,12 +10,12 @@ class Ec::ItemsController < Ec::BaseController
   end
 
   def new
-    @item = @current_site.ec_items.new(ec_product_id: params[:ec_product_id])
+    @item = @current_user.ec_items.new(ec_product_id: params[:ec_product_id])
     render layout: 'application_pop'
   end
 
   def create
-    @item = @current_site.ec_items.new(params[:ec_item])
+    @item = @current_user.ec_items.new(params[:ec_item])
     if @item.save
       flash[:notice] = '保存成功'
       render inline: "<script>parent.location.reload();</script>"
@@ -34,7 +34,7 @@ class Ec::ItemsController < Ec::BaseController
   end
 
   def on_shelf
-    @item = @current_site.ec_items.find(params[:id])
+    @item = @current_user.ec_items.find(params[:id])
 
     respond_to do |format|
       if @item.onshelf!
@@ -48,7 +48,7 @@ class Ec::ItemsController < Ec::BaseController
   end
 
   def off_shelf
-    @item = @current_site.ec_items.find(params[:id])
+    @item = @current_user.ec_items.find(params[:id])
 
     respond_to do |format|
       if @item.offshelf!
@@ -62,7 +62,7 @@ class Ec::ItemsController < Ec::BaseController
   end
 
   def destroy
-    @item = @current_site.ec_items.find(params[:id])
+    @item = @current_user.ec_items.find(params[:id])
     @product = @item.ec_product
     if @item.deleted!
       redirect_to (@product.ec_items.show.count > 0 ? :back : ec_shops_path), notice: "删除成功！"
@@ -74,6 +74,6 @@ class Ec::ItemsController < Ec::BaseController
   private
 
     def find_item
-      @item = @current_site.ec_items.find(params[:id])
+      @item = @current_user.ec_items.find(params[:id])
     end
 end

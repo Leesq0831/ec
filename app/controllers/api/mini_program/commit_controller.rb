@@ -48,7 +48,7 @@ class Api::MiniProgram::CommitController < ApplicationController
   private
 
     def find_mp_user
-      @mp_user = current_site.wx_mp_user
+      @mp_user = current_account.wx_mp_user
     end
 
 end

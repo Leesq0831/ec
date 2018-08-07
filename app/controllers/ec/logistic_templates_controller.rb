@@ -11,17 +11,17 @@ class Ec::LogisticTemplatesController < Ec::BaseController
 
   def index
     params_q = params[:q].present? ? params[:q] : nil
-    @q = @current_site.ec_logistic_templates.includes([:ec_logistic_template_items]).order('ec_logistic_templates.created_at DESC').search(params_q)
+    @q = @current_user.ec_logistic_templates.includes([:ec_logistic_template_items]).order('ec_logistic_templates.created_at DESC').search(params_q)
     @logistic_templates = @q.page(params[:page])
   end
 
   def new
-    @logistic_template = @current_site.ec_logistic_templates.new(valuation_method: 'weight', ship_method_list: '快递')
+    @logistic_template = @current_user.ec_logistic_templates.new(valuation_method: 'weight', ship_method_list: '快递')
     @logistic_template.ec_logistic_template_items << @logistic_template.ec_logistic_template_items.new(first_unit: 1, add_unit: 1, is_default: 1, city_list: '全国')
   end
 
   def create
-    @logistic_template = @current_site.ec_logistic_templates.new(params[:ec_logistic_template])
+    @logistic_template = @current_user.ec_logistic_templates.new(params[:ec_logistic_template])
     if @logistic_template.save
       redirect_to ec_logistic_templates_path, notice: '添加成功'
     else
@@ -60,6 +60,6 @@ class Ec::LogisticTemplatesController < Ec::BaseController
 
   private
     def set_logistic_template
-      @logistic_template = @current_site.ec_logistic_templates.includes([:ec_logistic_template_items]).where(id: params[:id]).first
+      @logistic_template = @current_user.ec_logistic_templates.includes([:ec_logistic_template_items]).where(id: params[:id]).first
     end
 end

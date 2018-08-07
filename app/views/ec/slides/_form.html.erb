@@ -47,7 +47,7 @@
         <label class="control-label">链接</label>
         <div class="clearfix">
           <% slides = [] %>
-          <% menus = @current_site.ec_slides.bottom_menu.pluck(:url) %>
+          <% menus = @current_user.ec_slides.bottom_menu.pluck(:url) %>
           <% current = @ec_slide.url %>
           <% ids = [] %>
           <% current_employee.employee_roles.each{|role| ids << role.permission_ids } %>

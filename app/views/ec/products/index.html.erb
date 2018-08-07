@@ -23,7 +23,7 @@
               </div>
 
               <div class="col-md-2">
-                <%= f.select :ec_category_id_eq, @current_site.ec_categories.product_category.pluck(:name, :id), {include_blank: '分类'}, class: 'col-xs-12' %>
+                <%= f.select :ec_category_id_eq, @current_user.ec_categories.product_category.pluck(:name, :id), {include_blank: '分类'}, class: 'col-xs-12' %>
               </div>
 
               <div class="col-md-2">

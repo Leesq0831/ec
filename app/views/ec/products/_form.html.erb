@@ -4,7 +4,7 @@
       <div class="form-group">
         <label class="control-label">商品分类<span class="required-star">*</span></label>
         <div class="clearfix">
-           <%=f.select :ec_category_id, @current_site.ec_categories.product_category.pluck(:name,:id), {}, class: "col-md-6" %>
+           <%=f.select :ec_category_id, @current_user.ec_categories.product_category.pluck(:name,:id), {}, class: "col-md-6" %>
         </div>
       </div>
 
@@ -12,7 +12,7 @@
         <label class="control-label">服务承诺<span class="required-star">*</span></label>
         <div class="clearfix">
           <%= hidden_field_tag 'ec_product[ec_tag_ids][]', '' %>
-          <% @current_site.ec_tags.product_tag.each do |tag| %>
+          <% @current_user.ec_tags.product_tag.each do |tag| %>
             <label><%= check_box_tag 'ec_product[ec_tag_ids][]', tag.id, @product.ec_tags.include?(tag) %> <%= tag.name %></label>
           <% end %>
         </div>

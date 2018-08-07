@@ -1,17 +1,17 @@
 class Ec::ProductsController < Ec::BaseController
   before_filter :find_product, only: [:edit, :show, :items, :update, :destroy, :onshelf, :offshelf, :update_sort]
   def index
-    @search = @current_site.ec_products.show.search(params[:search])
+    @search = @current_user.ec_products.show.search(params[:search])
     @products = @search.order("position asc").page(params[:page])
   end
 
   def new
-    @product = @current_site.ec_products.new
+    @product = @current_user.ec_products.new
     @product.ec_items.new
   end
 
   def create
-    @product = @current_site.ec_products.new(params[:ec_product])
+    @product = @current_user.ec_products.new(params[:ec_product])
     if @product.save
       redirect_to items_ec_product_path(@product), notice: '保存成功'
     else
@@ -43,16 +43,16 @@ class Ec::ProductsController < Ec::BaseController
   end
 
   def stock
-    @ec_items = @current_site.ec_items.show.where(ec_product_id: params[:ids])
+    @ec_items = @current_user.ec_items.show.where(ec_product_id: params[:ids])
     render layout: 'application_pop'
   end
 
   def stock_in
-    @stock = @current_site.ec_stocks.create(params[:ec_stock])
+    @stock = @current_user.ec_stocks.create(params[:ec_stock])
     
     params[:ec_items].each do |ec_item|
       if ec_item[:qty].to_i > 0
-        ec_stock_item = @current_site.ec_stock_items.create(ec_item_id: ec_item[:id].to_i, qty: ec_item[:qty].to_i, ec_stock_id: @stock.try(:id))
+        ec_stock_item = @current_user.ec_stock_items.create(ec_item_id: ec_item[:id].to_i, qty: ec_item[:qty].to_i, ec_stock_id: @stock.try(:id))
         ec_stock_item.effected
       end
     end
@@ -85,7 +85,7 @@ class Ec::ProductsController < Ec::BaseController
   end
 
   def onshelf_all
-    if @current_site.ec_products.onshelf_all(params[:ids])
+    if @current_user.ec_products.onshelf_all(params[:ids])
       redirect_to :back, notice: '批量上架成功'
     else
       redirect_to :back, alert: '批量上架失败'
@@ -93,7 +93,7 @@ class Ec::ProductsController < Ec::BaseController
   end
 
   def offshelf_all
-    if @current_site.ec_products.offshelf_all(params[:ids])
+    if @current_user.ec_products.offshelf_all(params[:ids])
       redirect_to :back, notice: '批量下架成功'
     else
       redirect_to :back, alert: '批量下架失败'
@@ -101,7 +101,7 @@ class Ec::ProductsController < Ec::BaseController
   end
 
   def recommend_all
-    if @current_site.ec_products.where(id: params[:ids]).update_all(is_recommend: true)
+    if @current_user.ec_products.where(id: params[:ids]).update_all(is_recommend: true)
       redirect_to :back, notice: '批量推荐成功'
     else
       redirect_to :back, alert: '批量推荐失败'
@@ -109,7 +109,7 @@ class Ec::ProductsController < Ec::BaseController
   end
 
   def not_recommend_all
-    if @current_site.ec_products.where(id: params[:ids]).update_all(is_recommend: false)
+    if @current_user.ec_products.where(id: params[:ids]).update_all(is_recommend: false)
       redirect_to :back, notice: '批量推荐成功'
     else
       redirect_to :back, alert: '批量推荐失败'
@@ -117,7 +117,7 @@ class Ec::ProductsController < Ec::BaseController
   end
 
   def delete_all
-    if @current_site.ec_products.deleted_all(params[:ids])
+    if @current_user.ec_products.deleted_all(params[:ids])
       redirect_to :back, notice: '批量删除成功'
     else
       redirect_to :back, alert: '批量删除失败'
@@ -127,6 +127,6 @@ class Ec::ProductsController < Ec::BaseController
   private
 
     def find_product
-      @product = @current_site.ec_products.find(params[:id])
+      @product = @current_user.ec_products.find(params[:id])
     end
 end

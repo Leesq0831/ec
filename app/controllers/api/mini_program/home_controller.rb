@@ -5,40 +5,40 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
 
   # 轮播图片
   def swip_slides
-    @slides = @current_site.ec_slides.swipe
+    @slides = @current_account.ec_slides.swipe
     ids = []
-    @current_site.account.employees.first.employee_roles.each{|role| ids << role.permission_ids } rescue nil
+    @current_account.account.employees.first.employee_roles.each{|role| ids << role.permission_ids } rescue nil
 
     render json: {
       slides: @slides.map{|s| [s.pic_url, s.url]},
       template: ids.flatten.uniq,
-      template_id: @current_site.account.try(:ec_template_id) || 1,
-      mobile: @current_site.try(:account).try(:tel),
+      template_id: @current_account.account.try(:ec_template_id) || 1,
+      mobile: @current_account.try(:account).try(:tel),
       name: @current_mp_user.nickname,
-      cashpay: @current_site.account.try(:cashpay).to_i
+      cashpay: @current_account.account.try(:cashpay).to_i
     }
   end
 
   # Banner广告活动
   def banner_slides
-    @banners = @current_site.ec_slides.banner
+    @banners = @current_account.ec_slides.banner
     render json: {banners: @banners.map{|s| [s.pic_url, s.url]} }
   end
 
   def home_menu
-    @categories = @current_site.ec_slides.home_menu
+    @categories = @current_account.ec_slides.home_menu
     render json: {categories: @categories.map{|s| [s.pic_url, s.url, s.title]} }
   end
 
   # 推荐商品菜单
   def banner_products
-    @categories = @current_site.ec_categories.onshelf.product_category.recommend
+    @categories = @current_account.ec_categories.onshelf.product_category.recommend
     respond_to :json
   end
 
   # 推荐商品列表
   def index_products
-    @categories = @current_site.ec_categories.onshelf.product_category.recommend
+    @categories = @current_account.ec_categories.onshelf.product_category.recommend
     respond_to do |format|
       format.json {render "api/mini_program/home/banner_products" }
     end
@@ -47,7 +47,7 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
   # 搜索
   def search
     return render json: {products: []} if params[:name].blank?
-    @products = @current_site.ec_products.onshelf.where("name like ?", "%#{params[:name]}%").order("ec_products.position asc")
+    @products = @current_account.ec_products.onshelf.where("name like ?", "%#{params[:name]}%").order("ec_products.position asc")
     respond_to :json
   end
 
@@ -55,7 +55,7 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
   def add_cart
     return render json: {code: -2, errormsg: "暂未登录"} unless @current_user
 
-    @ec_item = @current_site.ec_items.find_by_id(params[:item_id])
+    @ec_item = @current_account.ec_items.find_by_id(params[:item_id])
     return render json: {code: -1, errormsg: "该规格不存在"} unless @ec_item
     return render json: {code: 0, errormsg: "商品库存不足"} if @ec_item.qty < 1
     @cart_item = @current_user.ec_cart_items.where(ec_item_id: @ec_item.id).first_or_initialize(qty: params[:qty] || 1, ec_shop_id: 1, original_price: @ec_item.price)
@@ -71,7 +71,7 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
 
   def cart_num
     cart_num = @current_user.ec_cart_items.sum(:qty) rescue 0
-    render json: {cart_num: cart_num, version: @current_mp_user.try(:user_version).to_s, mobile: @current_site.try(:account).try(:tel)}
+    render json: {cart_num: cart_num, version: @current_mp_user.try(:user_version).to_s, mobile: @current_account.try(:account).try(:tel)}
   end
 
   def get_areas
@@ -80,7 +80,7 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
   end
 
   def get_info
-    account = @current_site.try(:account)
+    account = @current_account.try(:account)
     url = "http://upload.qiniu.com/putb64/-1"
     qr = MiniProgramCommit.mp_qrcode(@current_mp_user)
     if qr
@@ -92,7 +92,7 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
       @current_mp_user.update_attributes(mp_code: r["key"]) if r["key"]
     end
 
-    render json: {code: 1, errormsg: "ok", des: account.try(:description), name: @current_mp_user.nickname, qr: qiniu_image_url(@current_mp_user.mp_code), mobile: @current_site.try(:account).try(:tel), lng: @current_site.account.try(:lng), lat: @current_site.account.try(:lat), address: @current_site.account.try(:address) }
+    render json: {code: 1, errormsg: "ok", des: account.try(:description), name: @current_mp_user.nickname, qr: qiniu_image_url(@current_mp_user.mp_code), mobile: @current_account.try(:account).try(:tel), lng: @current_account.account.try(:lng), lat: @current_account.account.try(:lat), address: @current_account.account.try(:address) }
   end
 
   def logistics

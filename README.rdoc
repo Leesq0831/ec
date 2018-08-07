@@ -1,10 +1,10 @@
 环境安装：
   bundle install
-  修改 config/database.yml，并将 cms 项目的数据库结构导入数据库中
+  修改 config/database.yml，并将项目的数据库结构导入数据库中
   将 config/local_env.yml.example 拷贝到 config/local_env.yml
 
 部署须知：
-  后台应用部署到： web1.winwemedia.com 和 web2.winwemedia.com 服务器的 /opt/apps/winwemedia/current 目录；
+  后台应用部署到服务器的 /opt/apps/winwemedia/current 目录；
     部署命令： `cap production deploy`
 
   其它环境的部署请参照 config/deploy.rb 文件；
@@ -12,15 +12,6 @@
   注意： 如果部署到staging环境或生产环境， 并且 assets 文件有变动， 请先执行 cap {{stage}} precompile
 
 sidekiq部署：
-  应用程序部署到 faye.service.winwemedia.com， 以root运行 `/etc/init.d/sidekiq restart`
-
-faye部署：
-  应用程序部署到 faye.service.winwemedia.com， 进入 /opt/apps/faye 目录，运行 `rackup faye.ru -E production -p 9393 -D`
-
-
-短信报警：staging.winwemedia.com这台服务器每天10点07分会执行/opt/apps/scripts/sms.rb文件并检测系统短信是否小于2万条，如果是则会发送报警短信。
-
+  应用程序部署到 “”， 以root运行 `/etc/init.d/sidekiq restart`
 
 注意事项：
-当生产服务器的IP地址发生变更时，需要在微信开放平台 https://open.weixin.qq.com 修改白名单IP地址列表：
-203.195.131.131;203.195.143.22;

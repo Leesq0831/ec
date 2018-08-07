@@ -8,7 +8,7 @@
   <meta name="format-detection" content="telephone=no">
   <meta content="telephone=no" name="format-detection">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <title><%= content_for?(:title) ? yield(:title) : "摩雀科技" %></title>
+  <title><%= content_for?(:title) ? yield(:title) : "灏瀚科技" %></title>
     <%= stylesheet_link_tag '/wap/assets/stylesheets/main' %>
     <%= javascript_include_tag '/wap/assets/javascript/size', '/wap/assets/javascript/jquery-2.1.4.min', 'jquery_ujs', '/wap/assets/javascript/func', '/wap/assets/javascript/main', '/wap/js/jweixin-1.1.0', '/wap/js/jquery.lazyload' %>
     <%= csrf_meta_tags %>
@@ -67,8 +67,8 @@
       });
 
       wx.onMenuShareAppMessage({
-        title: "<% yield(:title) || '摩雀科技' %>", // 分享标题
-        desc: '摩雀科技', // 分享描述
+        title: "<% yield(:title) || '灏瀚科技' %>", // 分享标题
+        desc: '灏瀚科技', // 分享描述
         link: "<%= request.url %>", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
         imgUrl: "<%= shared_pic %>", // 分享图标
         type: 'link', // 分享类型,music、video或link，不填默认为link
@@ -82,7 +82,7 @@
       });
 
       wx.onMenuShareTimeline({
-        title: "<% yield(:title) || '摩雀科技' %>", // 分享标题
+        title: "<% yield(:title) || '灏瀚科技' %>", // 分享标题
         link: "<%= request.url %>", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
         imgUrl: "<%= shared_pic %>", // 分享图标
         success: function () { 

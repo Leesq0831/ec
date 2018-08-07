@@ -52,7 +52,7 @@ class Account < ActiveRecord::Base
   has_many :ec_stock_items
   has_many :ec_tags
 
-  after_create :init_data
+  #after_create :init_data
 
   before_save do
     if self.changed.include?("address")

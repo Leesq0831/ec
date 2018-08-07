@@ -37,9 +37,15 @@
     (ids.flatten.uniq & [id_or_ids].flatten.uniq).count > 0
   end
 
-   def username
+  def roles
+    ids = []
+    employee_roles.each{|role| ids << role.permissions.pluck(:key) }
+    ids.flatten.uniq
+  end
+
+  def username
     manager? ? name : [name, account_id].join('@')
-   end
+  end
 
   #
   # def find_or_generate_auth_token(encrypt = true)

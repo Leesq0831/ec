@@ -101,7 +101,7 @@ task :precompile do
   end
 end
 
-def config_deploy(application: 'ec', rails_env: 'production', branch: 'master', use_unicorn: true, releases: 3)
+def config_deploy(application: 'ec', rails_env: 'production', branch: 'master', use_unicorn: true, releases: 1)
   set :keep_releases, releases
   set :application, application
   set :deploy_to, "/opt/apps/#{application}"

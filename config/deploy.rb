@@ -5,13 +5,13 @@ require 'capistrano/sidekiq'
 set :rvm_ruby_string, '2.1.5' # Change to your ruby version
 set :rvm_type, :user # :user if RVM installed in $HOME
 
-set :repository, 'ssh://git@git.biaotutech.com:1688/opt/repos/biaotu/wx.git'
+set :repository, 'git@github.com:Leesq0831/ec.git'
 set :scm, :git
 set :user, 'deploy'
 # set :admin_runner, 'root'
 set :use_sudo, false
 # set :group_writable, false
-set :port, 1688
+set :port, 22
 
 # deployt_via: remote_cache, chechout, export or copy
 set :deploy_via, :remote_cache
@@ -22,8 +22,8 @@ default_run_options[:pty] = true
 set :keep_releases, 3
 
 task :production do
-  role :app, *%w[mp.dingyutech.com]
-  role :db, 'mp.dingyutech.com', primary: true
+  role :app, *%w[59.110.137.84]
+  role :db, '59.110.137.84', primary: true
 
   config_deploy
 
@@ -33,8 +33,8 @@ task :production do
 end
 
 task :staging do
-  role :app, *%w[mp.biaotuyun.com]
-  role :db, 'mp.biaotuyun.com', primary: true
+  role :app, *%w[59.110.137.84]
+  role :db, '59.110.137.84', primary: true
 
   config_deploy rails_env: 'staging'
 
@@ -67,27 +67,27 @@ namespace :deploy do
   end
 
   task :custom_symlinks, roles: :app do
-    if %w[biaotu biaotu_mp].include?(application)
-      assets_suffix = %w[biaotu biaotu_mp].include?(application) ? 'biaotu_mp' : application
-      run "ln -nfs /opt/apps/shared/biaotu_mp/assets/#{assets_suffix} #{release_path}/public/assets"
+    if %w[ec].include?(application)
+      assets_suffix = %w[ec].include?(application) ? 'ec' : application
+      run "ln -nfs /opt/apps/shared/ec/assets/#{assets_suffix} #{release_path}/public/assets"
     end
 
-    run "ln -nfs /opt/apps/shared/biaotu_mp/config/database.yml #{release_path}/config/database.yml"
-    run "ln -nfs /opt/apps/shared/biaotu_mp/uploads #{release_path}/public/uploads"
-    run "ln -nfs /opt/apps/shared/biaotu_mp/logs #{release_path}/public/logs"
+    run "ln -nfs /opt/apps/shared/ec/config/database.yml #{release_path}/config/database.yml"
+    run "ln -nfs /opt/apps/shared/ec/uploads #{release_path}/public/uploads"
+    run "ln -nfs /opt/apps/shared/ec/logs #{release_path}/public/logs"
 
     run "ln -nfs #{shared_path}/sockets #{release_path}/tmp/sockets"
-    run "ln -nfs /opt/apps/shared/biaotu_mp/config/unicorn.rb #{release_path}/config/unicorn.rb"
+    run "ln -nfs /opt/apps/shared/ec/config/unicorn.rb #{release_path}/config/unicorn.rb"
   end
 
 end
 
 desc 'Precompile assets locally and then rsync to app servers'
 task :precompile do
-  if %w[biaotu_mp].include?(application)
+  if %w[ec].include?(application)
     assets_suffix = application
     tmp_assets_dir = "__assets_#{assets_suffix}"
-    shared_assets_dir = "/opt/apps/shared/biaotu_mp/assets/#{assets_suffix}/"
+    shared_assets_dir = "/opt/apps/shared/ec/assets/#{assets_suffix}/"
 
     run_locally "mkdir -p public/#{tmp_assets_dir}; mv public/#{tmp_assets_dir} public/assets;"
     run_locally 'bundle exec rake assets:clean_expired; RAILS_ENV=production bundle exec rake assets:precompile;'
@@ -101,7 +101,7 @@ task :precompile do
   end
 end
 
-def config_deploy(application: 'biaotu_mp', rails_env: 'production', branch: 'mp', use_unicorn: true, releases: 3)
+def config_deploy(application: 'ec', rails_env: 'production', branch: 'master', use_unicorn: true, releases: 3)
   set :keep_releases, releases
   set :application, application
   set :deploy_to, "/opt/apps/#{application}"

@@ -1,0 +1,17 @@
+<%= form_for([:mobile, like], remote: true, html: { id: "like_form", style: "display: inline;" }) do |f| %>
+  <%= f.hidden_field :site_id %>
+  <%= f.hidden_field :user_id %>
+  <%= f.hidden_field :likeable_id %>
+  <%= f.hidden_field :likeable_type %>
+
+  <span class="like-btn"></span>
+  <!-- <span class="like-count"><%#= like.likeable.likes.count %></span> -->
+<% end %>
+
+<script type="text/javascript">
+  $(function(){
+    $(".like-btn").click(function(){
+      $("#like_form").submit();
+    });
+  });
+</script>

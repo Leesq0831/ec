@@ -1,0 +1,66 @@
+<div class="html typelist">
+  <div class="wlist" id="J_wlist" style="padding-top: 0.15rem;"></div>
+  <a href="javascript:;" class="nomore" id="J_more"><img src="/wap/assets/images/nomore.png" class="noimg"><span id="J_moretext"></span></a>
+</div>
+<script type="text/javascript">
+    $(function(){
+        var data = {"type":0,"price":0,"scene":0,"page":1,"pagesize":12},
+            sc = getRequest(),
+            isajax = false,//设置开关 防止重复提交;
+            isdone = false; // 数据是否加载完毕
+
+        var J_wlist = $('#J_wlist'),
+            J_more = $('#J_more'),
+            J_moretext = $('#J_moretext');
+
+        // 获取列表数据
+        getajax();
+        var ajax = '';
+        function getajax(first){
+            if(first){
+                J_wlist.html('');
+                isdone = false;
+            };
+            // ajax获取列表数据
+            isajax = true;
+            J_moretext.html("正在加载···");
+            ajax = $.ajax({
+                type: "GET",
+                url: "/wap/shops/<%= @shop.id %>/product_list",
+                data: {data},
+                dataType: "json",
+                success: function(res){
+                    if(res.code){
+                        var dt = res.data,len = dt.length,str = '';
+                        for(var i=0;i<len;i++){
+                            var v = dt[i];
+                            str += '<a href="/wap/items/'+v.pid+'" class="witem">\
+                                    <p><img src="'+v.imgsrc+'" class="witem_img"></p>\
+                                    <p class="witem_name">'+v.name+'</p>\
+                                    <p class="witem_pn"><span class="witem_p">￥'+parseFloat(v.price).toFixed(2)+'</span>已售&ensp;'+v.sold+'</p>\
+                                </a>';
+                        };
+                        if((data.pagesize * data.page) >= res.total){
+                            isdone = true;
+                            J_moretext.html("没有更多了");
+                        }else{
+                            J_moretext.html("点击加载更多");
+                        };
+                        // isdone = true;
+                        J_wlist.append(str);
+                    }
+                }
+            });
+        };
+
+        // 点击加载更多
+        J_more.click(function(){
+            if(isdone){
+                CUES.tip({"msg":"没有更多了","type":"danger"});
+                return false;
+            };
+            data.page++;
+            getajax();
+        });
+    });
+</script>

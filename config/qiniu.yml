@@ -1,0 +1,20 @@
+defaults: &defaults
+  access_key: 'Vh2eyVOvWPPA9Vxf7O2drllvQd6TVWYlMykVG1u-'
+  secret_key: 'S7ptNtBPUw_L7Yr8rNUv6eBcMi0fr0ge-lWqFXqk'
+  bucket_pictures: 'heba'
+  bucket_media: 'heba'
+  bucket_views720: 'heba'
+  bucket_wmall: 'heba'
+  domain: 'biaotu.net'
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

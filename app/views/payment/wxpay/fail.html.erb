@@ -1,0 +1,27 @@
+<% provide(:title, "支付失败") %>
+
+<div class="page">
+  <div class="weui-msg">
+    <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg"></i></div>
+    <div class="weui-msg__text-area">
+      <h2 class="weui-msg__title">支付失败!</h2>
+      <p class="weui-msg__desc">订单金额：<%= f @payment.amount %>元</p>
+    </div>
+    <div class="weui-msg__opr-area">
+      <p class="weui-btn-area">
+        <%= link_to '重新支付', payment_wxpay_pay_url(site_id: @payment.site_id, out_trade_no: @payment.out_trade_no, openid: params[:openid], showwxpaytitle: 1), class: 'weui-btn weui-btn_primary'  %>
+        <%= link_to '返回商家页面', 'javascript:void(0);', class: 'weui-btn weui-btn_default', id: 'site' %>
+      </p>
+    </div>
+    <%#= render 'footer' %>
+  </div>
+</div>
+
+<%= render 'pay' %>
+
+<script>
+  <% if flash[:notice] || flash[:alert] %>
+    alert("<%= flash[:notice] || flash[:alert] %>");
+    <% flash[:notice]= nil; flash[:alert] = nil %>
+  <% end %>
+</script>

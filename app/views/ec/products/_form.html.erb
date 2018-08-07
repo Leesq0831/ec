@@ -1,0 +1,259 @@
+<%= nested_form_for @product, url: @product.new_record? ? @product : ec_product_path(@product), validate: true, html: {id: 'pro_booking_item'} do |f| %>
+
+    <div class="col-xs-12">
+      <div class="form-group">
+        <label class="control-label">商品分类<span class="required-star">*</span></label>
+        <div class="clearfix">
+           <%=f.select :ec_category_id, @current_site.ec_categories.product_category.pluck(:name,:id), {}, class: "col-md-6" %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label">服务承诺<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= hidden_field_tag 'ec_product[ec_tag_ids][]', '' %>
+          <% @current_site.ec_tags.product_tag.each do |tag| %>
+            <label><%= check_box_tag 'ec_product[ec_tag_ids][]', tag.id, @product.ec_tags.include?(tag) %> <%= tag.name %></label>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label">商品名称<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= f.text_field :name, class: "col-md-6"%>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label">排序<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= f.text_field :position, class: "col-md-6"%>
+        </div>
+      </div>
+<!--
+      <div class="form-group">
+          <label class="control-label">商品属性<span class="required-star">*</span></label>
+          <div class="clearfix">
+            <%= f.fields_for :ec_parameters do |i| %>
+                <div class="col-sm-12">
+                  <div class="col-md-2 row">
+                    <div class="input-group input-group-text">
+                      <span class="input-group-addon">属性名称：</span>
+                      <%= i.text_field :key, class: 'col-xs-12' %>
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="input-group input-group-text">
+                      <span class="input-group-addon">属性值：</span>
+                      <%= i.text_field :value, class: 'col-xs-12' %>
+                    </div>
+                  </div>
+
+                  <div class="col-md-1">
+                    <div class="input-group input-group-text">
+                      <%= i.link_to_remove "删除" %>
+                    </div>
+                  </div>
+                </div>
+                <br><br>
+              <% end %>
+              <p><%= f.link_to_add "添加属性", :ec_parameters %></p>
+          </div>
+      </div>
+ -->
+
+<!--
+      <div class="form-group">
+          <label class="control-label">商品规格<span class="required-star">*</span></label>
+          <div class="clearfix">
+            <%#= f.fields_for :ec_items do |i| %>
+                <div class="col-sm-12 no-padding">
+                  <div class="col-md-2 row">
+                    <div class="input-group input-group-text">
+                      <span class="input-group-addon">名称：</span>
+                      <%#= i.text_field :name, class: 'col-xs-12' %>
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="input-group input-group-text">
+                      <span class="input-group-addon">sku：</span>
+                      <%#= i.text_field :sku, class: 'col-xs-12' %>
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="input-group input-group-text">
+                      <span class="input-group-addon">市场价：</span>
+                      <%#= i.text_field :market_price, class: 'col-xs-12' %>
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="input-group input-group-text">
+                      <span class="input-group-addon">零售价：</span>
+                      <%#= i.text_field :price, class: 'col-xs-12' %>
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="input-group input-group-text">
+                      <span class="input-group-addon">已售数量：</span>
+                      <%#= i.text_field :display_sold_qty, class: 'col-xs-12' %>
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="input-group input-group-text">
+                      <%#= i.select :product_type, EcItem.product_type_options %>
+
+                      <%# unless i.object.new_record? %>
+
+                        <%# if i.object.onshelf? %>
+                          <a><%#= link_to'下架', offshelf_ec_product_path(@product,item_id:i.object.id),method: :post %>&nbsp;</a>
+                        <%# end %>
+
+                        <%# if i.object.offshelf? || i.object.draft? %>
+                          <a><%#= link_to '上架', onshelf_ec_product_path(@product,item_id:i.object.id),method: :post %>&nbsp;</a>
+                        <%# end %>
+                      <%# end %>
+                      <%#= i.link_to_remove "删除" %>
+                    </div>
+                  </div>
+                </div>
+                <br><br>
+              <%# end %>
+              <p><%#= f.link_to_add "添加规格", :ec_items %></p>
+          </div>
+      </div>
+      -->
+      <div class="form-group">
+        <label class="control-label">商品图片<span class="required-star">*</span><small class="text-warning">图片建议尺寸：640像素*640像素，可上传多张</small></label>
+        <div class="clearfix">
+          <div class="cieldon-file" data-type="6" data-width="160" data-height="160" data-imgs_type="ec_product_ec_pictures"  data-img="<%= f.object.ec_pictures.map(&:format_pic_url).map(&:to_s).join(',') %>"></div>
+        </div>
+      </div>
+<!--
+      <div class="form-group">
+        <label class="control-label">省市</label>
+        <div class="clearfix">
+          <%#= f.select :province_id, Province.pluck(:name, :id), {include_blank: '请选择省份'} %>
+          <%#= f.select :city_id, @product.new_record? ? [] : @product.province.cities.pluck(:name, :id), {include_blank: '请选择城市'} %>
+        </div>
+      </div>
+ -->
+      <div class="form-group">
+        <label class="control-label">商品详情<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= render "shared/form_rich_text", field_name: "description", obj: f.object, f: f, wrapper_html_options: {class: "form-control"}%>
+        </div>
+      </div>
+
+      <div class="form-group ">
+        <%= f.submit '确定', class: 'btn btn-sm btn-primary' %>
+        <a href="javascript:;" class="btn btn-sm btn-default" onclick="javascript:history.go(-1);">返回</a>
+      </div>
+
+    </div>
+<% end %>
+<% content_for :custom_js do %>
+    <script type="text/javascript">
+        function set_info(element){
+            var html = '<div class="modal fade modal-text" id="popup-confirm" style="display: block;">' +
+                    '<div class="modal-dialog">' +
+                    '<div class="modal-content">' +
+                    '<div class="modal-header">' +
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+                    '<h4 class="modal-title">系统提示</h4>' +
+                    '</div><form role="form" action="" method="">';
+
+            html += '<div class="modal-body">' +
+                    '<p class="text-center">确认删除图片</p></div>' +
+                    '<div class="clearfix"></div>';
+
+            html += '<div class="modal-footer">';
+            html += '<a href="javascript:;" class="btn btn-sm btn-primary" id="pop-confrim-submit">确定</a>';
+            html += '<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">取消</button>';
+            html += '</div></form>';
+            html += '</div>';
+
+            html += '</div></div></div>';
+            $('#popup-confirm').remove();
+            $("body").append(html);
+            $('#popup-confirm').modal('show');
+            $('#popup-confirm').on('click', 'button[data-dismiss="modal"], .btn-primary', function(){
+                var dc = $(parent.document),
+                    $modal = dc.find('.modal'),
+                    $modalBg = dc.find(".modal-backdrop")
+                $modal.attr('aria-hidden', true).removeClass('in');
+                $modalBg.remove();
+                $(parent.document.body).removeClass('modal-open');
+                $modal.remove();
+                if($(this).hasClass('btn-primary')){
+                    $(element).next().val(1);
+                    $(element).closest('.file-img').hide();
+                }
+            });
+            return false;
+        }
+
+        $(function(){
+            var imgs = $('.file-img');
+            <% @product.ec_pictures.each_with_index do |m, i| %>
+                <% uuid = UUIDTools::UUID.random_create.to_s[0,6] %>
+                imgs.eq(parseInt('<%= i + 1%>')).append('<input class="destroy" name="ec_product[ec_pictures_attributes][<%= uuid %>][_destroy]" type="hidden">')
+                imgs.eq(parseInt('<%= i + 1%>')).append('<input class="destroy" name="ec_product[ec_pictures_attributes][<%= uuid %>][id]" type="hidden" value="<%= m.id %>">')
+            <% end %>
+
+
+            $('.cieldon-file').on('click', '.file-del', function(){
+                set_info($(this));
+            });
+            $(".hidden_booking_category_id").val($('.booking_category:visible:last').val());
+            $("#selects").on("change", ".booking_category", function(){
+                if($(this).val() == "-1"){
+                }
+                else{
+                    $.ajax({
+                        type: "GET",
+                        url: "/ec/product_categories/" + $(this).val() + "?rel=" + ($(this).attr('rel')) + '&&type=1',
+                        success: function(data) {
+                            return false;
+                        },
+                        error: function() {
+                            return false;
+                        }
+                    });
+                }
+            });
+            <% if @product.new_record? %>
+              showCityOptions($("#ec_product_province_id").val());
+            <% end %>
+            $("#ec_product_province_id").on('change', function(e){
+              var province_id = $(this).val();
+              showCityOptions(province_id);
+            });
+
+            function showCityOptions(province_id) {
+              $.ajax({
+                url: "/cities",
+                data: { "province_id": province_id },
+                dataType: 'json',
+                success: function(result){
+                  var options = $("#ec_product_city_id");
+                  options.empty(); // remove old options
+
+                  options.append($("<option></option>").attr("value", '').text('请选择城市'));
+
+                  $.each(result, function(index, option) {
+                    options.append($("<option></option>")
+                      .attr("value", option.id).text(option.name));
+                  });
+                }
+              });
+            };
+        });
+    </script>
+<% end %>

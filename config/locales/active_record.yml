@@ -1,0 +1,121 @@
+zh-CN:
+  # Attributes names common to most models
+  attributes:
+    created_at: "创建时间"
+    updated_at: "更新时间"
+    id: '编号'
+
+  helpers:
+    actions: '操作'
+    titles:
+      edit: "编辑 %{model}"
+      new: "新增 %{model}"
+    links:
+      new: '新增'
+      edit: '编辑'
+      destroy: '删除'
+      cancel: '取消'
+      confirm: '确认要执行操作吗？'
+      back: '返回'
+
+  # Active Record models configuration
+  activerecord:
+    errors:
+      messages:
+        taken: "已经被使用"
+        record_invalid: "验证失败: %{errors}"
+        # Append your own errors here or at the model/attributes scope.
+
+      # You can define own errors for models or model attributes.
+      # The values :model, :attribute and :value are always available for interpolation.
+      #
+      # For example,
+      #   models:
+      #     user:
+      #       blank: "This is a custom blank message for %{model}: %{attribute}"
+      #       attributes:
+      #         login:
+      #           blank: "This is a custom blank message for User login"
+      # Will define custom blank validation message for User model and
+      # custom blank validation message for login attribute of User model.
+
+    models:
+      user: "用户"
+      address: "收货地址"
+      country: '国家'
+      province: '省份'
+      city: '城市'
+      district: '地区'
+      page: '页面'
+   
+      panoramagram: '360全景图'
+      wx/card: '微信卡券'
+      brokerage/client: '全民经纪人'
+      red_packet/setting: '节日礼包'
+      wx_menu: '自定义菜单'
+
+    attributes:
+      user:
+        password: "密码"
+        username: "姓名"
+        nickname: "昵称"
+        mobile_tel: '手机'
+        tel: '电话'
+        email: "邮箱"
+        password_confirmation: "确认密码"
+        login: '昵称或邮箱'
+
+      admin_user:
+        name: "姓名"
+        email: "邮箱"
+        password: "密码"
+        password_confirmation: "确认密码"
+        login_count: "登录次数"
+        role: '角色'
+        status: '状态'
+
+      address:
+        user_id: "用户"
+        mobile_tel: '手机'
+        tel: '电话'
+        email: "邮箱"
+        countr_id: "国家"
+        province_id: "省份"
+        city_id: "城市"
+        district_id: "地区"
+        location: '地址'
+        zipcode: '邮编'
+        is_default: '默认地址'
+        sort: '排序'
+        description: '描述'
+
+      country:
+        name: '名称'
+        symbol: '符号'
+        currency: '货币'
+        sort: '排序'
+        description: '描述'
+
+      province:
+        name: '名称'
+        country_id: '国家'
+        sort: '排序'
+        description: '描述'
+
+      city:
+        name: '名称'
+        province_id: '省份'
+        sort: '排序'
+        description: '描述'
+
+      district:
+        name: '名称'
+        city_id: '城市'
+        sort: '排序'
+        description: '描述'
+
+      wx_menu:
+        name: '菜单名称'
+      supplier_apply:
+        tel: '手机号码'
+        contact: '联系人'

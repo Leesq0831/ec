@@ -1,0 +1,49 @@
+<div class="widget-box transparent">
+  <div class="widget-header widget-header-flat">
+    <h4 class=""><%= @category.new_record? ? '新增分类' : '编辑分类'%></h4>
+  </div>
+  <div class="widget-body">
+    <%= form_for @category, url: @category.new_record? ? ec_product_categories_path(@category) : ec_product_category_path(@category), validate: true, html: {id: 'ec_product_category_form'} do |f| %>
+        <%= f.hidden_field :parent_id %>
+        <%= f.hidden_field :id %>
+
+        <div class="form-group margin-top-10">
+          <label class="control-label">分类名称<span class="required-star">*</span><small class="text-warning">必填，不能超过8个字</small></label>
+          <div class="clearfix">
+            <%= f.text_field :name, class: "col-xs-8 required", maxlength: 8, validate: true %>
+          </div>
+          <span class="help-block"></span>
+        </div>
+        <div class="form-group">
+          <label class="control-label">摘要<span class="required-star">*</span></label>
+          <div class="clearfix">
+            <%= f.text_field :summary, class: "col-xs-8 required", maxlength: 8, validate: true %>
+          </div>
+          <span class="help-block"></span>
+        </div>
+        <div class="form-group">
+          <label class="control-label">分类图片<span class="help-inline text-warning line-height-32">建议图片尺寸：200*200</span>
+            <a id="clearpic" class="btn btn-default btn-sm margin-left-20" href="javascript:;">删除</a>
+          </label>
+          <div class="clearfix">
+            <div id="pic" data-key="<%= @category.pic_key %>" data-name="category[pic_key]" data-img="<%= @category.pic_url %>" data-height="100" data-width="100" data-type="0" class="cieldon-file pull-left width-100px cieldon-file-0"></div>
+          </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="text-left margin-top-10">
+          <input type="submit" class="btn btn-primary btn-sm btn-submit" value="保存">
+          <input type="reset" class="btn btn-default btn-sm" value="取消" onclick="javascript:location.href='<%= ec_product_categories_path %>'">
+        </div>
+
+    <% end %>
+  </div>
+</div>
+<script type="text/javascript">
+  $(function(){
+    $('#clearpic').click(function(){
+        $('#pic .file-btn a').css('background-image','');
+        $('input[name="website_article[pic]"]').val('');
+    });
+  })
+</script>

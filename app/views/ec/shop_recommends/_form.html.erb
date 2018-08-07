@@ -1,0 +1,42 @@
+<%= form_for [ @ec_shop_recommend ], validate: true,html:{class: 'form'} do |f| %>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>类型<span class="required-star">*</span></label>
+      <div class="clearfix">
+        <%= f.select :recommend_type, EcShopRecommend.recommend_type_options,{}, class: 'col-md-12' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>所属餐厅<span class="required-star">*</span></label>
+      <div class="clearfix">
+        <%= f.select :ec_shop_id,EcShop.pluck(:name,:id),{}, class: 'col-md-12' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>主题名称<span class="required-star">*</span></label>
+      <div class="clearfix">
+        <%= f.text_field :title, class: 'col-md-12' %>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>排序<span class="required-star"></span></label>
+      <div class="clearfix">
+        <%= f.text_field :position, class: 'col-md-12' %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>上传封面图<span class="required-star">*</span> <small>图片建议尺寸：712像素*426像素，支持格式：jpg、png、bmp、gif。</small></label>
+      <div class="clearfix">
+        <div class="cieldon-file pull-left" data-type="0" data-div="#img-1" data-width="100" data-height="170" data-name="ec_shop_recommend[pic_key]" data-img="<%= @ec_shop_recommend.pic_url %>" data-key="<%= @ec_shop_recommend.pic_key || "" %>"></div>
+      </div>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  <div class="modal-footer">
+    <%= f.submit '保存', class: "btn btn-sm btn-primary" %>
+    <%= f.button '取消', type: :reset, class: "btn btn-sm btn-default", data: { dismiss: "modals" } %>
+  </div>
+<% end %>

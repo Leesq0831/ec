@@ -1,0 +1,109 @@
+<style type="text/css">
+  .select-ec {
+    width: 150px;
+  }
+</style>
+<% content_for :main_content do %>
+  <div class="main-content ">
+    <div class="breadcrumbs" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <%= render 'partials/home' %>
+        <li><%= link_to '餐厅管理' %></li>
+        <li><%= link_to '餐厅列表', ec_shops_path %></li>
+      </ul>
+      <%#= render '/layouts/qrcode' %>
+    </div>
+
+    <div class="page-content">
+      <div class="tabbable">
+        <%= render "ec/shop_categories/top_categories" %>
+
+        <div class="row">
+          <div class=" col-md-12 margin-top-20">
+            <%= form_for @search, url: ec_orders_path,  html: { method: :get } do |f| %>
+              <div class="col-md-3">
+                <div class="input-group input-group-sm input-group-text">
+                  <%= f.text_field :name_like, placeholder:"请输入餐厅名称", class: 'col-xs-12' %>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="input-group input-group-text">
+                  <span class="input-group-addon">分类：</span>
+                  <%= f.select :ec_category_id_eq, EcCategory.product_category.pluck(:name, :id), {include_blank: '全部'}, class: 'col-xs-12' %>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="input-group input-group-text">
+                  <span class="input-group-addon">状态：</span>
+                  <%= f.select :status_eq, EcShop.status_options[0...-1], {include_blank: '全部'}, class: 'col-xs-12' %>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="input-group input-group-sm input-group-text">
+                  <%= f.submit '查询', class: 'btn btn-sm btn-filter btn-primary' %>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="input-group input-group-sm input-group-text pull-right">
+                  <%= link_to '新增餐厅',  new_ec_shop_path , class: 'btn btn-sm btn-filter btn-primary' %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class=" col-md-12 margin-top-10">
+          <table id="rolesTable" class="table table-striped table-bordered table-hover dataTable m">
+            <thead>
+              <tr>
+                <th>分类</th>
+                <th>名称</th>
+                <th>logo</th>
+                <th>地址</th>
+                <th>电话</th>
+                <th>酒柜</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tboday>
+              <% @ec_shops.each do |ec_shop| %>
+                <tr>
+                  <td><%= ec_shop.ec_category.try(:name) %></td>
+                  <td><%= ec_shop.name %></td>
+                  <td><% if ec_shop.format_logo_url.present? %><img src="<%= ec_shop.format_logo_url %>" width="50" height="50" class="margin-right-10"><% end %></td>
+                  <td><%= [ec_shop.district.try(:name), ec_shop.address].join %></td>
+                  <td><%= ec_shop.tel %></td>
+                  <td><%= ec_shop.cabinets_count %></td>
+                  <td><%= ec_shop.status_name %></td>
+                  <td>
+                    <%#= link_to '酒柜管理', ec_shop_cabinets_path(ec_shop_id: ec_shop.id) %>
+                    <%= link_to '售卖商品', edit_ec_shop_product_path(ec_shop)%>
+                    <%= link_to '二维码', 'javascript:;', data: {toggle: 'modals', height: '1000', title: '餐厅二维码', iframe: qrcode_ec_shop_path(ec_shop)}, class: ''%>
+                    <%= link_to '启用', enabled_ec_shops_path(id:ec_shop.id,status:ec_shop.status), method: :put if ec_shop.wait? %>
+                    <%= link_to '停用', disabled_ec_shops_path(id:ec_shop.id,status:ec_shop.status), method: :put if ec_shop.pass? %>
+
+                    <%= link_to '编辑', edit_ec_shop_path(ec_shop) %>
+                    <%= link_to '删除', ec_shop_path(ec_shop),method: :delete, data:{confirm: "确定删除？"} %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if @ec_shops.count == 0 %>
+                <tr>
+                  <td colspan="5"><span class="green">无记录</span></td>
+                </tr>
+              <% end %>
+            </tboday>
+          </table>
+          <%= paginate @ec_shops %>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+<% end %>

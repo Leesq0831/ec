@@ -1,0 +1,59 @@
+<% content_for :main_content do %>
+  <div class="main-content ">
+    <div class="breadcrumbs" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <%= render 'partials/home' %>
+        <!-- <li><%#= link_to '微服务', bookings_path %></li> -->
+        <li><%= link_to '价位管理', ec_prices_path %></li>
+      </ul>
+      <%#= render '/layouts/qrcode' %>
+    </div>
+
+    <div class="page-content">
+      <%= render "ec/product_categories/top_categories" %>
+
+      <div class="row">
+        <div class="col-xs-12 margin-top-20">
+          <div class="pull-right">
+            <%= link_to '新增', 'javascript:;', data: {toggle: 'modals', height: '300', title: '新增价位', iframe: new_ec_price_path}, class: 'btn btn-primary btn-sm' %>
+          </div>
+        </div>
+
+        <div class="col-sm-12 margin-top-10">
+          <table id="goodsTable" class="table table-striped table-bordered table-hover dataTable ">
+            <thead>
+            <tr>
+              <th>商品分类</th>
+              <th>最低价位</th>
+              <th>最高价位</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="colleges_body">
+            <% @prices.each do |price| %>
+                <tr>
+                  <td><%= price.ec_category.name %></td>
+                  <td><%= f price.min_price %></td>
+                  <td><%= f price.max_price %></td>
+                  <td><%= price.created_at %></td>
+                  <td class="txt-left-align">
+                    <%= link_to '编辑', 'javascript:;', data: {toggle: 'modals', height: '300', title: '编辑价位', iframe: edit_ec_price_path(price)} %>
+
+                    <%= link_to '删除', ec_price_path(price), data: {method: :delete, confirm: '删除价位后会更新这个分类对应所有商品的价位，确定吗？'} %>
+
+                  </td>
+                </tr>
+            <% end %>
+            <% if @prices.blank? %>
+              <tr><td colspan="5">无记录</td></tr>
+            <% end %>
+            </tbody>
+          </table>
+          <%= paginate @prices %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+<% end %>

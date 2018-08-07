@@ -1,0 +1,37 @@
+<%= nested_form_for @ec_shop_cabinet, url: @ec_shop_cabinet.new_record? ? @ec_shop_cabinet : ec_shop_cabinet_path(@ec_shop_cabinet),validate: true, :html => {id: "pro_booking_item"} do |f| %>
+  <div class="modal-body">
+    <div class=" col-md-12 margin-top-20">
+      <div class="form-group">
+        <label class="control-label">所属餐厅<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= f.select :ec_shop_id, EcShop.pass.map{|m| [m.name,m.id]},class: "form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label">状态<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= f.select :status, EcShopCabinet.status_options, class: "form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label">名称<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= f.text_field :name, class: "col-md-4" %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label">编号<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= f.text_field :no, class: "col-md-4" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+  <div class="modal-footer">
+    <%= f.submit '保存', class: "btn btn-sm btn-primary" %>
+    <%= f.button '取消', type: :reset, class: "btn btn-sm btn-default", data: { dismiss: "modals" } %>
+  </div>
+<% end %>

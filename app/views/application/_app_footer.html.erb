@@ -1,0 +1,76 @@
+
+<div class="alert J-guanzhu" style="display:none">
+  <div class="alert-m">
+    <div class="alert-c" style="margin-top: 30px">
+      <% if @wx_mp_user.try(:qrcode_url) %>
+        <div class="qrcode_image" style="text-align: center">
+          <%= image_tag(@wx_mp_user.qrcode_url, width: '80%') %>
+        </div>
+        <br>
+
+        <p><span class="alert-num">1</span>请<span class="alert-text">长按</span>并<span class="alert-text">识别图中的二维码</span></p>
+        <p><span class="alert-num">2</span>点击<span class="alert-text">关注</span>公众号【<%= @wx_mp_user.try(:nickname) %>】</p>
+        <p>如果已关注，请打开该公众帐号回复<span class="alert-text"><%= @keyword ||  @activity.try(:keyword) %></span>，参与此活动。</p>
+      <% else %>
+        <div class="alert-img"></div>
+        <p>请先关注公众帐号</p>
+        <p><span class="alert-num">1</span>点击右上角<span class="alert-text">分享按钮</span>查看公众号</p>
+        <p><span class="alert-num">2</span>在【添加朋友】—【查找公众号】中搜索</p>
+        <p><span class="alert-btn"><%= @wx_mp_user.try(:nickname) %></span>（长按可复制）</p>
+        <p>如果已关注，请打开该公众帐号回复<span class="alert-text"><%= @keyword ||  @activity.try(:keyword) %></span>，参与此活动</p>
+      <% end %>
+    </div>
+    <div class="alert-f">
+      <a href="javascript:;" class="alert-f-btn J-close">我知道了</a>
+    </div>
+  </div>
+</div>
+<div class="alert J-register" style="display:none">
+  <div class="alert-m">
+    <div class="alert-img"></div>
+    <div class="alert-c text-center">
+      <%-if defined?(@user) && @user.present?%>
+        <%- vip_user = @user.vip_user %>
+        <%- if vip_user.present?%>
+          <%- if vip_user.pending? %>
+              <h1>您的会员卡还没通过审核 </h1>
+             <p>会员卡审核通过后可参与</p>
+          <%- elsif vip_user.freeze? %>
+              <h1>您的会员卡已冻结 </h1>
+              <p>会员卡解冻后可参与</p>
+          <%- elsif vip_user.rejected?%>
+              <h1>您的会员卡申请已拒绝</h1>
+              <p>该活动仅允许会员可参与</p>
+          <%- end %>
+        <%- else %>
+           <h1>请先领取会员卡</h1>
+           <p>该活动仅允许会员可参与</p>
+        <%- end %>
+       <%- end %>
+    </div>
+    <div class="alert-btn-box">
+      <div class="alert-cell cell-4">
+        <a href="javascript:;" class="alert-f-btn btn-gray J-close">我知道了</a>
+      </div>
+      <%- if defined?(@user) && @user.vip_user.blank? %>
+        <div class="alert-cell">
+          <a href="<%= app_vips_path(site_id: session[:site_id]) %>" class="alert-f-btn J-close">领取会员卡</a>
+        </div>
+      <%- end %>
+    </div>
+  </div>
+</div>
+
+<% if @site && @site_copyright && @site.try(:show_copyright?) %>
+  <%- unless @not_show_copyroght %>
+    <footer>
+      <%= link_to_if(@site_copyright.footer_link.present?, @site_copyright.footer_content, @site_copyright.footer_link) %>
+    </footer>
+  <% end %>
+<%- end %>
+
+<%= render "application/mobile_footer" %>
+
+<% if controller_name !~ /\Aguess|waves|unfolds|scenes|surveys|recommends|coupons|vips|slots|gua|hit_eggs|wheel|fight|shakes\z/ %>
+  <%= render 'application/image_zoom' %>
+<% end %>

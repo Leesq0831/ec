@@ -1,0 +1,40 @@
+default: &default
+  SECRET_KEY_BASE: 'filler'
+  weixin_message_verify_token: "399033f89a0859330eaz"
+  weixin_message_encrypt_decrypt_key: "btuc52fbdc02d7b78a4870407e83a8dbc305ba46bb8"
+  # weixin_message_external_handler_url: 'http://example.com/message'
+  # weixin_message_external_handler_format: 'json/xml'
+  open_weixin_platform_test_mp_user_app_id: "wx570bc396a51b8ff8"
+  open_weixin_platform_test_mp_user_user_name: "gh_3c884a361561"
+  open_weixin_platform_test_wxa_user_app_id: "wxd101a85aa106f53e"
+  open_weixin_platform_test_wxa_user_user_name: "gh_8dad206e9538"
+  open_weixin_platform_app_id: "wxae8afea736016f17"
+  open_weixin_platform_app_secret: "0a8dd2463e77a29c9e555d3cd0ce2a96"
+  mini_program_request_domains: "https://wp.vkelai.com,https://open2.weixin.vcooline.com"
+  mini_program_ws_request_domains: ""
+  mini_program_upload_domains: ""
+  mini_program_download_domains: ""
+  qiniu_access_key: "filler"
+  qiniu_secret_key: "filler"
+  qiniu_domain: "filler"
+  qiniu_bucket: "filler"
+  requestdomain: "https://mp.dingyutech.com,https://mp.biaotuyun.com"
+  wsrequestdomain: "wss://mp.dingyutech.com,wss://mp.biaotuyun.com"
+  uploaddomain: "https://mp.dingyutech.com,https://mp.biaotuyun.com"
+  downloaddomain: "https://mp.dingyutech.com,https://mp.biaotuyun.com"
+
+development:
+  <<: *default
+
+staging:
+  <<: *default
+
+production:
+  weixin_message_verify_token: "399033f89a0859330eaz"
+  weixin_message_encrypt_decrypt_key: "winc52fbdc02d7b78a4870407e83a8dbc305ba46bb8"
+  open_weixin_platform_app_id: "wx24fff4cb94da3a43"
+  open_weixin_platform_app_secret: "cb25e84ddf50b2c5e9f9ffa1a5014a8a"
+  requestdomain: "https://mp.dingyutech.com,https://mp.biaotuyun.com"
+  wsrequestdomain: "wss://mp.dingyutech.com,wss://mp.biaotuyun.com"
+  uploaddomain: "https://mp.dingyutech.com,https://mp.biaotuyun.com"
+  downloaddomain: "https://mp.dingyutech.com,https://mp.biaotuyun.com"

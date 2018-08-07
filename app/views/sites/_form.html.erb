@@ -1,0 +1,25 @@
+<%= form_for @site, validate: true do |f| %>
+  <%#= f.hidden_field :use_share_wx_mp_user, value: 1 if @site.new_record? %>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>站点名称<span class="required-star">*</span></label>
+      <div class="clearfix">
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>登录账号<span class="required-star">*</span></label>
+      <div class="clearfix">
+        <%= f.text_field :login, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>登录密码<span class="required-star">*</span></label>
+      <div class="clearfix">
+        <%= f.password_field :password, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <%= render 'shared/modalFooter' %>
+<% end %>

@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width,minimum-scale=1,user-scalable=no,maximum-scale=1,initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no">
+  <title><%= @material.title %></title>
+  <link rel="stylesheet" type="text/css" href="/stylesheets/app/client-page1762b0.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/vweisiteV01.css"/>
+  <%= javascript_include_tag 'mobile/lib/jquery' %>
+  <%= javascript_include_tag 'jquery_ujs' %>
+  <style type="text/css">
+    .html {
+      padding: 15px 15px 40px 15px;
+    }
+    #nickname {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 90%;
+    }
+    ol, ul {
+      padding-left: 25px;
+    }
+    #activity-detail .page-content .text {
+      font-size:16px;
+    }
+  </style>
+</head>
+
+<body id="activity-detail">
+  <div class="html">
+    <div class="main">
+      <div class="page-bizinfo">
+        <div class="header">
+          <h1 id="activity-name" style="margin: 10px 0;"><%= @material.title %></h1>
+          <p class="activity-info">
+            <span id="post-date" class="activity-meta no-extra">
+              <%= @material.created_at.try(:to_date) %>
+              &nbsp;&nbsp;
+              <%= @material.author %>
+            </span>
+            <!--<a href="javascript:;" id="post-user" class="activity-meta"><span class="text-ellipsis"><%#= @material.site.wx_mp_user.try(:nickname) %></span><i class="icon_link_arrow"></i></a>-->
+          </p>
+        </div>
+      </div>
+      <div class="page-content">
+        <% if @material.pic_key.present? && @material.is_show_pic %>
+            <div class="media" id="media"><%= image_tag @material.pic_url %></div>
+        <% end %>
+        <div class="text"><%= raw @material.content %></div>
+        <p class="page-url"><%= link_to '阅读原文', "#{@material.source_url}#mp.weixin.qq.com", class: 'page-url-link' if @material.source_url.present? %></p>
+
+        <!-- 阅读数与点赞数 -->
+        <%= render "mobile/likes/index", resource: (@material || @website_menu), user: @user %>
+
+        <!-- 分享朋友圈 -->
+        <%= render "shared/share_pyq" %>
+
+        <!-- 评论 -->
+        <%= render "mobile/comments/index" %>
+
+      </div>
+    </div>
+  </div>
+  <%= render 'application/app_footer' %>
+</body>
+</html>
+
+<style type="text/css">
+  footer {
+    height: 35px;
+    line-height: 35px;
+    position: relative;
+    margin-top: -35px;
+    text-align: center;
+    z-index: 0;
+  }
+  footer a {
+    color: #888;
+    text-decoration: none;
+  }
+</style>

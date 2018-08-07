@@ -1,0 +1,16 @@
+<%= form_for @comment_template, url: @comment_template.new_record? ? ec_comment_templates_path : ec_comment_template_path(@comment_template), validate: true, html: {id: 'ec_comment_template_form'} do |f| %>
+  <div class="modal-body">
+      <div class="form-group">
+        <label class="control-label">评论模板内容<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= f.text_area :content, rows: 3, class: 'col-xs-12'%>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+      <div class="form-group ">
+       <%= f.submit '确定', class: 'btn btn-sm btn-primary' %>
+       <button type="button" class="btn btn-sm btn-default" data-dismiss="modals">取消</button>
+      </div>
+
+  </div>
+<% end %>

@@ -1,0 +1,23 @@
+__filename = "会员数据.xls"
+sheet1 = xls.create_worksheet
+system_header = ['姓名','等级', '编号', '年龄', '性别', '可用积分', '冻结积分', '总积分','联系方式', '地址', '状态', '备注']
+sheet1.row(0).concat(system_header)
+row_number = 1
+@vip_users.page(params[:page_exl]).per(EXPORTING_COUNT).each do |vip_user|
+  row_content = [
+                    vip_user.name ,
+                    vip_user.vip_grade_id ,
+                    vip_user.user_no ,
+                    vip_user.age,
+                    vip_user.gender_name,
+                    vip_user.usable_points,
+                    vip_user.froze_points,
+                    vip_user.total_points,
+                    vip_user.mobile,
+                    [vip_user.province.try(:name), vip_user.city.try(:name), vip_user.district.try(:name), vip_user.address].join('-'),
+                    vip_user.status_name,
+                    vip_user.description
+                ]
+  sheet1.row(row_number).replace(row_content)
+  row_number += 1
+end

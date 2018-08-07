@@ -1,0 +1,81 @@
+<% if @order.shipping_delivery?%>
+  <tr>
+      <td width="100">物流公司：</td>
+      <td style=" width: 100px; ">
+        <%#= f.text_field :delivery_corp, placeholder: "", class: "form-control form-control-inline" unless @order.delivery_type? %>
+        <%= f.select :delivery_type, options_for_select(Order::DeliveryTypeHuman.to_a.map(&:reverse), selected: f.object.delivery_type), {}, class: "form-control", style: "width: 180px;",disabled: @order.delivered? ? true : false if @order.delivery_type? %>
+      </td>
+      <td>
+        <%= link_to "查看物流信息", "#{@order.delivery_pc_api_url}", target: :_blank, class: 'line-height-32' if @order.support_delivery_api? %>
+      </td>
+  </tr>
+  <tr id="delivery_sn_status">
+      <td>物流单号：</td>
+      <td>
+        <%= f.text_field :delivery_sn, placeholder: "", class: "form-control form-control-inline" %>
+      </td>
+      <td></td>
+  </tr>
+  <% if current_shop.support_book_pickup_time?%>
+  <tr>
+      <td>预约收货日期：</td>
+      <td>
+        <%=time_tag @order.shipping.try(:book_pickup_at_date) if @order.shipping.try(:book_pickup_at_date) %>
+      </td>
+  </tr>
+  <% end %>
+  <tr>
+      <td></td>
+      <td>
+        <%= f.submit "确认发货", class: "btn btn-success btn-sm" if @order.paid?%>
+
+        <% if @order.delivered? %>
+          <button class="btn btn-success btn-sm" disabled>已发货</button>
+          <%= f.submit "修改物流信息", class: "btn btn-link btn-inline btn-sm" %>
+        <% end %>
+        <%= f.submit "确认发货", class: "btn btn-success btn-sm", disabled: true unless @order.paid? || @order.finished? || @order.delivered?%>
+      </td>
+      <td></td>
+  </tr>
+<% end %>
+<% if @order.personal_pickup?%>
+  <tr>
+      <td width="100">提货门店：</td>
+      <td>
+        <%= @order.shipping.try(:subbranch_name) %>
+      </td>
+  </tr>
+  <% if current_shop.support_book_pickup_time?%>
+  <tr>
+      <td>预约提货日期：</td>
+      <td>
+        <%=time_tag @order.shipping.try(:book_pickup_at_date) if @order.shipping.try(:book_pickup_at_date)%>
+      </td>
+  </tr>
+  <% end %>
+  <tr>
+      <td></td>
+      <td>
+        <%= f.submit "确认发货", class: "btn btn-success btn-sm" if @order.paid?%>
+
+        <% if @order.delivered? %>
+          <button class="btn btn-success btn-sm" disabled>已发货</button>
+        <% end %>
+        <%= f.submit "确认发货", class: "btn btn-success btn-sm", disabled: true unless @order.paid? || @order.finished? || @order.delivered?%>
+      </td>
+  </tr>
+<% end %>
+<script>
+  $(function(){
+      $("#order_delivery_type").on("change", function(){
+          var _self = $(this).find('option:selected');
+          if(_self.val() =="supplierdefined"){
+              $("#order_delivery_sn").val("0000000000");
+              $("#delivery_sn_status").hide();
+          }else{
+              $("#order_delivery_sn").val('');
+              $("#delivery_sn_status").show();
+          }
+      });
+  });
+</script>

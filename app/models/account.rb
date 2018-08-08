@@ -51,6 +51,7 @@ class Account < ActiveRecord::Base
   has_many :ec_stocks
   has_many :ec_stock_items
   has_many :ec_tags
+  has_many :payment_settings
 
   #after_create :init_data
 

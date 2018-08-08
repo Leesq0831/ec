@@ -140,7 +140,7 @@ class WxUser < ActiveRecord::Base
 
   def init_user
     # user = User.create(site_id: 10001)
-    user = User.create(site_id: wx_mp_user.site_id)
+    user = User.create(account_id: wx_mp_user.account_id)
     update_attributes(user_id: user.try(:id))
   end
 end

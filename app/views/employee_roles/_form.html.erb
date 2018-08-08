@@ -1,52 +1,26 @@
 <%= form_for @employee_role, validate: true, :html => {id: "role-form", role: "form" } do |f| %>
-    <div class="modal-body">
-      <div class="form-group">
-        <label class="control-label">角色名称<span class="required-star">*</span></label>
-        <div class="clearfix">
-          <%= f.text_field :name, maxlength: 50, class: "col-xs-12" %>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label">页面权限<span class="required-star">*</span></label>
-        <div class="clearfix">
-          <% current_employee.account.permissions.where(parent_id: 0).each do |permission| %>
-            <div class="clearfix">
-              <p class="permission_show" onclick="listen(this)">
-                <%= check_box_tag 'permission[permission_ids][]', permission.id, @employee_role.role_permission_maps.map{|m| m.permission_id}.include?(permission.id), @employee_role.new_record? ? {checked: false} : {} %>
-                  <%= permission.name %>
-              </p>
-              <ol class="permission" style="display: <%= @employee_role.role_permission_maps.where(permission_id: permission.id).present? ? 'block' : 'none'%>">
-                <% current_employee.account.permissions.where(parent_id: permission.id).each do |permission_1| %>
-                  <p>
-                    <%= check_box_tag 'permission[permission_ids][]', permission_1.id, @employee_role.role_permission_maps.map{|m| m.permission_id}.include?(permission_1.id), @employee_role.new_record? ? {checked: false} : {} %>
-                      <%= permission_1.name %>
-                  </p>
-                <% end %>
-              </ol>
-            </div>
-          <% end %>
-        </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label class="control-label">角色名称<span class="required-star">*</span></label>
+      <div class="clearfix">
+        <%= f.text_field :name, maxlength: 50, class: "col-xs-12" %>
       </div>
     </div>
-    <div class="clearfix"></div>
-    <div class="modal-footer">
-      <input type="submit" class="btn btn-sm btn-primary" data-fn="submit" value="确定" />
-      <button type="button" class="btn btn-sm btn-default" data-dismiss="modals">取消</button>
+    <div class="form-group">
+      <label class="control-label">页面权限<span class="required-star">*</span></label>
+      <div class="clearfix">
+        <% Permission.all.each do |permission| %>
+          <label style="width:30%">
+            <%= check_box_tag 'permission[permission_ids][]', permission.id, @employee_role.role_permission_maps.map{|m| m.permission_id}.include?(permission.id), @employee_role.new_record? ? {checked: false} : {} %>
+              <%= permission.name %>
+          </label>
+        <% end %>
+      </div>
     </div>
+  </div>
+  <div class="clearfix"></div>
+  <div class="modal-footer">
+    <input type="submit" class="btn btn-sm btn-primary" data-fn="submit" value="确定" />
+    <button type="button" class="btn btn-sm btn-default" data-dismiss="modals">取消</button>
+  </div>
 <% end %>
-<%# content_for :customer_js do %>
-  <script class="text/javascript">
-    function listen(e){
-      // alert($(e).next("ol").attr('class'))
-      if ($(e).children('#permission_permission_ids_').is(":checked")){
-          $(e).next("ol").css("display", "block");
-      }
-      else{
-          $(e).next("ol").css("display", "none");
-          $(e).next("ol").find("#permission_permission_ids_").attr("checked", false);
-      }
-    }
-
-  </script>
-<%# end %>

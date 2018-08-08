@@ -12,10 +12,10 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
     render json: {
       slides: @slides.map{|s| [s.pic_url, s.url]},
       template: ids.flatten.uniq,
-      template_id: @current_account.account.try(:ec_template_id) || 1,
-      mobile: @current_account.try(:account).try(:tel),
+      template_id: @current_account.try(:ec_template_id) || 1,
+      mobile: @current_account.try(:tel),
       name: @current_mp_user.nickname,
-      cashpay: @current_account.account.try(:cashpay).to_i
+      cashpay: @current_account.try(:cashpay).to_i
     }
   end
 

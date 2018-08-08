@@ -33,6 +33,7 @@
               <thead>
                   <tr>
                     <th>登录账号</th>
+                    <th>姓名</th>
                     <th>手机号码</th>
                     <th>邮箱</th>
                     <!-- <th>性别</th> -->
@@ -45,9 +46,10 @@
               <tboday>
                 <% @employees.each do |employee| %>
                     <tr>
+                      <td><%= employee.login %></td>
                       <td><%= employee.username %></td>
-                      <td><%= employee.mobile%></td>
-                      <td><%= employee.email%></td>
+                      <td><%= employee.mobile %></td>
+                      <td><%= employee.email %></td>
                       <!-- <td><%= employee.gender_name %></td> -->
                       <td><%= employee.employee_roles.pluck(:name).uniq.join(', ')%></td>
                       <td><%= employee.status_name%></td>

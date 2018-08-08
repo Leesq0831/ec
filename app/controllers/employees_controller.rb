@@ -1,7 +1,7 @@
 class EmployeesController < ApplicationController
 
   def index
-    @search = current_user.employees.member.search(params[:search])
+    @search = @current_user.employees.search(params[:search])
     @employees = @search.page(params[:page])
   end
 

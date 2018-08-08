@@ -1,16 +1,21 @@
 class Api::MiniProgram::WxUsersController < Api::MiniProgram::BaseController
   skip_before_filter :verify_authenticity_token, :set_wx_user
 
-  def wx_login
+  def create
     #return render json: {openid: WxUser.first.openid, mobile: "123123", name: "测试"}
      if params[:code].present?
-      code = params[:code].gsub(" ", "+")
-      encrypted_data = params[:encryptedData] ?  params[:encryptedData].gsub(" ", "+") : ""
-      iv = params[:iv] ? params[:iv].gsub(" ", "+") : ""
 
-      session[:session_info] = MiniProgramSessionService.code2session(code, params[:app_id])
+      # app_id = params[:app_id]
+      code = params[:code].gsub(" ", "+") 
+      encrypted_data = params[:encryptedData] ? params[:encryptedData].gsub(" ", "+") : ""
+      iv = params[:iv] ? params[:iv].gsub(" ", "+") : ""
+    
+      url = "https://api.weixin.qq.com/sns/jscode2session?appid=#{@current_mp_user.app_id}&secret=#{@current_mp_user.app_secret}&js_code=#{params[:code]}&grant_type=authorization_code"
+      result = RestClient.get(url)
+      session[:session_info] = JSON(result)
       encrypt_decrypt_key, openid = session[:session_info].values_at("session_key", "openid")
-      wx_user = WxUser.where(openid: openid, wx_mp_user_id: @current_mp_user.id).first_or_create
+      wx_user = @current_mp_user.wx_users.where(openid: openid).first_or_create
+
       if params[:iv]
         wx_middle = MiniProgramEncryptDecrypt.decrypt(encrypted_data, iv, encrypt_decrypt_key)
         nickName, openId, gender, city, province, country, avatarUrl, unionid = wx_middle.values_at("nickName", "openId", "gender", "city", "province", "country", "avatarUrl", "unionid")

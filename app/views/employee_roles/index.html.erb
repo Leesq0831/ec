@@ -41,7 +41,7 @@
                 <% @employee_roles.each do |role| %>
                     <tr>
                       <td><%= role.name %></td>
-                      <td><%= role.role_permission_maps.joins(:permission).where("permissions.parent_id != 0").map{|m| m.permission.name}.join(',  ') %></td>
+                      <td><%= role.permissions.map(&:name).join(',  ') %></td>
                       <td>
                         <%= link_to '编辑', 'javascript:;', data: {toggle: 'modals', target: 'roleModal', title: '编辑角色', width: '', height: '550', iframe: edit_employee_role_path(role)} %>
                         <%= link_to '删除', employee_role_path(role), data: {confirm: '确认删除？', url: employee_role_path(role), method: :delete} %>

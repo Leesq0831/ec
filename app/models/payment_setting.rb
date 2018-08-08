@@ -53,7 +53,7 @@ class PaymentSetting < ActiveRecord::Base
   validates :app_id, presence: true, if: :wxpay?
   validates :app_id, :api_client_cert, :api_client_key, presence: true, if: :wx_redpacket_pay?
 
-  belongs_to :site
+  belongs_to :account
   belongs_to :payment_type
 
   # attr_accessible :app_id, :app_secret, :partner_id, :partner_key, :pay_private_key, :pay_public_key, :pay_sign_key

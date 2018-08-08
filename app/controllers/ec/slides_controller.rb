@@ -6,17 +6,17 @@ class Ec::SlidesController < Ec::BaseController
   # end
 
   def index
-    @ec_slides = @current_site.ec_slides.order(:position)
-    @ec_slide = @current_site.ec_slides.where(id: params[:id]).first || @current_site.ec_slides.new
+    @ec_slides = @current_user.ec_slides.order(:position)
+    @ec_slide = @current_user.ec_slides.where(id: params[:id]).first || @current_user.ec_slides.new
   end
 
   def new
-    @ec_slide = @current_site.ec_slides.new(slide_type: params[:slide_type] || 1, position: params[:position] || 1)
+    @ec_slide = @current_user.ec_slides.new(slide_type: params[:slide_type] || 1, position: params[:position] || 1)
     render layout: 'application_pop'
   end
 
   def create
-    @ec_slide = @current_site.ec_slides.new(params[:ec_slide])
+    @ec_slide = @current_user.ec_slides.new(params[:ec_slide])
     if @ec_slide.save
       flash[:notice] = "添加成功"
       render inline: "<script>window.parent.location.href = '#{ec_slides_path}';</script>"
@@ -59,7 +59,7 @@ class Ec::SlidesController < Ec::BaseController
   private
 
   def set_ec_slide
-    @ec_slide = @current_site.ec_slides.where(id: params[:id]).first
+    @ec_slide = @current_user.ec_slides.where(id: params[:id]).first
     return redirect_to ec_slides_path, alert: '图片不存在或已删除' unless @ec_slide
   end
 

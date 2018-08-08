@@ -6,17 +6,17 @@ class PaymentSettingsController < ApplicationController
   before_filter :fetch_payment_settings, only: [:index, :enable, :disable]
 
   def edit
-    @payment_setting = current_site.payment_settings.find(params[:id])
+    @payment_setting = @current_user.payment_settings.find(params[:id])
     render layout: 'application_pop'
   end
 
   def new
-    @payment_setting = current_site.payment_settings.new(payment_type_id: params[:payment_type_id] || 10001)
+    @payment_setting = @current_user.payment_settings.new(payment_type_id: params[:payment_type_id] || 10001)
     render layout: 'application_pop'
   end
 
   def create
-    @payment_setting = current_site.payment_settings.new(params[:payment_setting])
+    @payment_setting = @current_user.payment_settings.new(params[:payment_setting])
     if @payment_setting.save
       flash[:notice] = '保存成功'
       render inline: "<script>window.parent.location.href = '#{payment_settings_url}';</script>"
@@ -27,7 +27,7 @@ class PaymentSettingsController < ApplicationController
   end
 
   def update
-    @payment_setting = current_site.payment_settings.find(params[:id])
+    @payment_setting = @current_user.payment_settings.find(params[:id])
     if @payment_setting.update_attributes(params[:payment_setting])
       flash[:notice] = '更新成功'
       render inline: "<script>window.parent.location.href = '#{payment_settings_url}';</script>"
@@ -38,30 +38,30 @@ class PaymentSettingsController < ApplicationController
   end
 
   def enable
-    @payment_setting = current_site.payment_settings.find(params[:id])
+    @payment_setting = @current_user.payment_settings.find(params[:id])
     if @payment_setting.proxy_yeepay?
       @payment_setting.enable! if current_user.pay_account.normal?
-      yeepay =  current_site.payment_settings.yeepay.first
+      yeepay =  @current_user.payment_settings.yeepay.first
       yeepay.disable! if yeepay.present?
     elsif @payment_setting.proxy_alipay?
-      alipay =  current_site.payment_settings.alipay.first
+      alipay =  @current_user.payment_settings.alipay.first
       @payment_setting.enable! if current_user.pay_account.normal?
       alipay.disable! if alipay.present?
     elsif @payment_setting.proxy_wxpay?
-      wxpay =  current_site.payment_settings.wxpay.first
+      wxpay =  @current_user.payment_settings.wxpay.first
       wxpay.disable! if wxpay.present?
       @payment_setting.enable! if current_user.pay_account.normal?
     elsif @payment_setting.yeepay?
       @payment_setting.enable!
-      proxy_yeepay =  current_site.payment_settings.proxy_yeepay.first
+      proxy_yeepay =  @current_user.payment_settings.proxy_yeepay.first
       proxy_yeepay.disable! if proxy_yeepay.present?
     elsif @payment_setting.alipay?
       @payment_setting.enable!
-      proxy_alipay =  current_site.payment_settings.proxy_alipay.first
+      proxy_alipay =  @current_user.payment_settings.proxy_alipay.first
       proxy_alipay.disable! if proxy_alipay.present?
     elsif @payment_setting.wxpay?
       @payment_setting.enable!
-      proxy_wxpay =  current_site.payment_settings.proxy_wxpay.first
+      proxy_wxpay =  @current_user.payment_settings.proxy_wxpay.first
       proxy_wxpay.disable! if proxy_wxpay.present?
     else
       @payment_setting.enable!
@@ -78,7 +78,7 @@ class PaymentSettingsController < ApplicationController
   end
 
   def disable
-    @payment_setting = current_site.payment_settings.find(params[:id])
+    @payment_setting = @current_user.payment_settings.find(params[:id])
     if @payment_setting.disable!
       @type, @notice = "info",  '操作成功'
     else
@@ -91,7 +91,7 @@ class PaymentSettingsController < ApplicationController
 
   private
     def fetch_payment_settings
-      @payment_settings = current_site.payment_settings
+      @payment_settings = @current_user.payment_settings
       @payment_settings = [
         @payment_settings.wxpay.first || @payment_settings.new(payment_type_id: 10001),
         # @payment_settings.yeepay.first || @payment_settings.new(payment_type_id: 10002),

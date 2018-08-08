@@ -71,7 +71,7 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
 
   def cart_num
     cart_num = @current_user.ec_cart_items.sum(:qty) rescue 0
-    render json: {cart_num: cart_num, version: @current_mp_user.try(:user_version).to_s, mobile: @current_account.try(:account).try(:tel)}
+    render json: {cart_num: cart_num, version: @current_mp_user.try(:user_version).to_s, mobile: @current_account.try(:tel)}
   end
 
   def get_areas
@@ -80,7 +80,7 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
   end
 
   def get_info
-    account = @current_account.try(:account)
+    account = @current_account
     url = "http://upload.qiniu.com/putb64/-1"
     qr = MiniProgramCommit.mp_qrcode(@current_mp_user)
     if qr
@@ -92,7 +92,7 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
       @current_mp_user.update_attributes(mp_code: r["key"]) if r["key"]
     end
 
-    render json: {code: 1, errormsg: "ok", des: account.try(:description), name: @current_mp_user.nickname, qr: qiniu_image_url(@current_mp_user.mp_code), mobile: @current_account.try(:account).try(:tel), lng: @current_account.account.try(:lng), lat: @current_account.account.try(:lat), address: @current_account.account.try(:address) }
+    render json: {code: 1, errormsg: "ok", des: account.try(:description), name: @current_mp_user.nickname, qr: qiniu_image_url(@current_mp_user.mp_code), mobile: @current_account.try(:tel), lng: @current_account.try(:lng), lat: @current_account.try(:lat), address: @current_account.try(:address) }
   end
 
   def logistics

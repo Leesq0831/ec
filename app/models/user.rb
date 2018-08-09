@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   has_many :ec_slide_users
   has_many :ec_slides, through: :ec_slide_users
 
-  belongs_to :site
+  belongs_to :account
 
   has_one :user
   has_one :vip_user

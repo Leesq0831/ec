@@ -3,7 +3,7 @@ class Api::MiniProgram::AddressesController < Api::MiniProgram::BaseController
   before_filter :find_address, only: [:show, :edit, :update, :destroy, :set_default]
 
   def index
-    @addresses = @current_user.ec_addresses.order("is_default desc, created_at asc")
+    @addresses = @current_user.ec_addresses.order("is_default desc, ec_addresses.created_at asc")
     respond_to :json
   end
 
@@ -28,16 +28,11 @@ class Api::MiniProgram::AddressesController < Api::MiniProgram::BaseController
     if !@address.is_default && params[:ec_address][:is_default] == "true"
       @current_user.ec_addresses.update_all(is_default: false)
     end
-
-    respond_to do |format|
-      format.json {render json: {code: @address.update_attributes(params[:ec_address]) ? 1 : 0 , id: @address.try(:id)}}
-    end
+    render json: {code: @address.update_attributes(params[:ec_address]) ? 1 : 0 , id: @address.try(:id)}
   end
 
   def destroy
-    respond_to do |format|
-      format.json {render json: {code: @address.destroy ? 1 : 0 }}
-    end
+    render json: {code: @address.destroy ? 1 : 0 }
   end
 
   def set_default
@@ -45,9 +40,7 @@ class Api::MiniProgram::AddressesController < Api::MiniProgram::BaseController
     return render json: {code: 0}  if address.try(:id) == params[:id].to_i
     address.update_attributes(is_default: false) if address
     
-    respond_to do |format|
-      format.json { render json: {code: @address.update_attributes(is_default: true) ? 1 : -1} }
-    end
+    render json: {code: @address.update_attributes(is_default: true) ? 1 : -1}
   end
 
   private

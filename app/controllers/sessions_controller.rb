@@ -1,9 +1,10 @@
 # coding: utf-8
 class SessionsController < ApplicationController
   skip_before_filter *ADMIN_FILTERS
-  skip_before_filter :check_auth_mobile
+  skip_before_filter :check_auth_mobile, :set_current_user
 
   def new
+    clear_sign_in_session
     clear_login_wrong_count
     render layout: false
   end

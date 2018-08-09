@@ -39,6 +39,7 @@ class Account < ActiveRecord::Base
 
   has_many :employees
   has_many :employee_roles
+  has_many :users
 
   has_many :ec_categories
   has_many :ec_items

@@ -12,6 +12,7 @@
 /db/schema.rb
 
 /config/database.yml
+/config/deploy.rb
 
 /public/uploads
 /public/tmp

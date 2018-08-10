@@ -7,7 +7,7 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
   def swip_slides
     @slides = @current_account.ec_slides.swipe
     ids = []
-    @current_account.account.employees.first.employee_roles.each{|role| ids << role.permission_ids } rescue nil
+    @current_account.employees.first.employee_roles.each{|role| ids << role.permission_ids } rescue nil
 
     render json: {
       slides: @slides.map{|s| [s.pic_url, s.url]},
@@ -81,14 +81,17 @@ class Api::MiniProgram::HomeController < Api::MiniProgram::BaseController
 
   def get_info
     account = @current_account
+    return render json: {code: 1, errormsg: "ok", des: account.try(:description), name: @current_mp_user.nickname, qr: qiniu_image_url(@current_mp_user.mp_code), mobile: @current_account.try(:tel), lng: @current_account.try(:lng), lat: @current_account.try(:lat), address: @current_account.try(:address) } #if @current_mp_user.mp_code
     url = "http://upload.qiniu.com/putb64/-1"
-    qr = MiniProgramCommit.mp_qrcode(@current_mp_user)
-    if qr
+    w_url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=#{@current_mp_user.wx_access_token}" 
+    qr = HTTParty.post(w_url, body: {scene: "scene", page: 'pages/index/index'}.to_json)
+
+    if qr["content-disposition"]
       headers = {
         "Content-Type"=>"application/octet-stream",
         "Authorization"=>"UpToken #{qiniu_pictures_upload_token}"
       }
-      r = HTTParty.post(url, headers: headers, body: qr)
+      r = HTTParty.post(url, headers: headers, body: Base64.strict_encode64(resp.body))
       @current_mp_user.update_attributes(mp_code: r["key"]) if r["key"]
     end
 

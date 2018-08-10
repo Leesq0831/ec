@@ -1,6 +1,6 @@
 require 'bundler/capistrano'
 require 'rvm/capistrano'
-require 'capistrano/sidekiq'
+# require 'capistrano/sidekiq'
 
 set :rvm_ruby_string, '2.1.5' # Change to your ruby version
 set :rvm_type, :user # :user if RVM installed in $HOME
@@ -11,7 +11,7 @@ set :user, 'deploy'
 # set :admin_runner, 'root'
 set :use_sudo, false
 # set :group_writable, false
-set :port, 22
+set :port, 1688
 
 # deployt_via: remote_cache, chechout, export or copy
 set :deploy_via, :remote_cache
@@ -22,8 +22,8 @@ default_run_options[:pty] = true
 set :keep_releases, 3
 
 task :production do
-  role :app, *%w[59.110.137.84]
-  role :db, '59.110.137.84', primary: true
+  role :app, 'www.zhishangtech.top'
+  role :db, 'www.zhishangtech.top', primary: true
 
   config_deploy
 

@@ -32,9 +32,9 @@ class EcItem < ActiveRecord::Base
   scope :show, -> {where(["ec_items.status > ?", -2 ])}
 
   before_validation do
-    if self.unified? && self.logistic_price.to_f < 0.0
-      return false
-    end
+    # if self.unified? && self.logistic_price.to_f < 0.0
+    #   return false
+    # end
   end
 
   before_save :set_ec_price

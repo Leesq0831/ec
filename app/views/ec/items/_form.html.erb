@@ -18,6 +18,13 @@
     </div>
 
     <div class="form-group">
+      <label>库存<span class="required-star">*</span></label>
+      <div class="clearfix">
+        <%= f.number_field :qty, validate: true, class: 'col-xs-12' %>
+      </div>
+    </div>
+
+    <div class="form-group">
       <label>规格名称<span class="required-star">*</span></label>
       <div class="clearfix">
         <%= f.text_field :name, class: 'col-xs-12' %>

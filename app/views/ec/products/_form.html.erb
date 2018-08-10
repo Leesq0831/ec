@@ -4,7 +4,7 @@
       <div class="form-group">
         <label class="control-label">商品分类<span class="required-star">*</span></label>
         <div class="clearfix">
-           <%=f.select :ec_category_id, @current_user.ec_categories.product_category.pluck(:name,:id), {}, class: "col-md-6" %>
+           <%=f.select :ec_category_id, @current_user.ec_categories.pluck(:name,:id), {}, class: "col-md-6" %>
         </div>
       </div>
 

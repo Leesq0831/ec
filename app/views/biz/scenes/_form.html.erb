@@ -20,7 +20,7 @@
         <%- end %>
       <%= render "weixin_setting", activity: activity, data_img: @activity.try(:pic_url), pic_data_name: "activity[pic_key]", pic_data_key: @activity.try(:pic_key), is_scene: true %>
 
-      <div class="alert alert-block alert-info" style="color:black;">以下设置需要认证的公众号并且与标途科技后台关联了授权，具体请参考：<a href="http://biaotu.net/site/dev_logs/203">http://biaotu.net/site/dev_logs/203</a> </div>
+      <div class="alert alert-block alert-info" style="color:black;">以下设置需要认证的公众号并且与标途科技后台关联了授权，具体请参考：<a href="http://zhishangtech.top/site/dev_logs/203">http://zhishangtech.top/site/dev_logs/203</a> </div>
 
       <%= activity.fields_for :share_setting do |share| %>
         <div class="form-group">

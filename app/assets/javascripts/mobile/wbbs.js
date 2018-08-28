@@ -44,7 +44,7 @@ getImgUrl = function(input,r,idx,fileInfo,fname){
         xhr.onreadystatechange = function(response) {
             if (xhr.readyState == 4 && xhr.status == 200 && xhr.responseText != "") {
                 var blkRet = JSON.parse(xhr.responseText);
-                var imgUrl='http://'+bucket+'.biaotu.net/'+blkRet.key;
+                var imgUrl='http://'+bucket+'.zhishangtech.top/'+blkRet.key;
                 // 判断是否需要执行回调函数
                 if ($(input).attr("data-callback") != undefined) {
                     eval($(input).attr("data-callback") + "('" + blkRet.key + "', '" + imgUrl + "')")

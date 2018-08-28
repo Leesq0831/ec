@@ -26,7 +26,7 @@ unique_id = (length = 16) ->
     done: (e, data) ->
       origin_file_name = data.files[0].name
       key = data.result.key
-      $(this).siblings("input").first().val("http://#{bucket}.biaotu.net/#{key}")
+      $(this).siblings("input").first().val("http://#{bucket}.zhishangtech.top/#{key}")
       $(this).siblings("input").eq(1).val(origin_file_name)
       $(this).siblings(".upload_progress").text "#{origin_file_name} 已上传"
 
@@ -40,7 +40,7 @@ unique_id = (length = 16) ->
     done: (e, data) ->
       origin_file_name = data.files[0].name
       key = data.result.key
-      $(this).siblings("input").first().val("http://#{bucket}.biaotu.net/#{key}")
+      $(this).siblings("input").first().val("http://#{bucket}.zhishangtech.top/#{key}")
       $(this).siblings("input").eq(1).val(origin_file_name)
       $(this).siblings(".upload_progress").text "#{origin_file_name}"
 
@@ -57,5 +57,5 @@ unique_id = (length = 16) ->
       preview_ele =  $(this).parent().parent().find(".upload-img span img")
       key = data.result.key
       $(this).siblings(".hidden").find("input").first().val(key)
-      preview_ele.attr("src", "http://#{bucket}.biaotu.net/#{key}")
+      preview_ele.attr("src", "http://#{bucket}.zhishangtech.top/#{key}")
 

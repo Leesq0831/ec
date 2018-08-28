@@ -51,19 +51,19 @@ Wp::Application.configure do
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
 
-  config.action_mailer.default_url_options = { :host => 'wx.91heba.com' }
+  config.action_mailer.default_url_options = { :host => 'localhost:3000' }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.default :charset => "utf-8"
   config.action_mailer.smtp_settings = {
-    address:              'smtp.exmail.qq.com',
-    port:                 25,
-    domain:               'exmail.qq.com',
-    user_name:            'forget_password@91heba.com',
-    password:             'vcl2wsx',
+    address:              'smtp.qq.com',
+    port:                 465,
+    domain:               'mail.qq.com',
+    user_name:            '850691579@qq.com',
+    password:             'ftwmkfsbxatibecc',
     authentication:       :login,
-    enable_starttls_auto:  false,
+    ssl:                  true
   }
   # Enable threaded mode
   # config.threadsafe!
@@ -79,7 +79,7 @@ Wp::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
   Wp::Application.config.middleware.use ExceptionNotification::Rack, email: {
-    :email_prefix => "[winwemedia Production Error] ",
+    :email_prefix => "Production ",
     :sender_address => %{},
     :exception_recipients => %w{}
   }

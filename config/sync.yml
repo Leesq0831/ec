@@ -19,9 +19,9 @@ development:
 # development:
 #   adapter: false
 
-test:
-  server: "http://localhost:9292/faye"
-  adapter_javascript_url: "http://localhost:9292/faye/faye.js"
+staging:
+  server: "http://47.100.230.249:9292/faye"
+  adapter_javascript_url: "http://47.100.230.249:9292/faye/faye.js"
   adapter: "Faye"
   auth_token: "97c42058e1466902d5adfac0f83e84c1794b9c3390e3b0824be9db8344eae82b"
   async: false

@@ -18,7 +18,7 @@ GIT
     jasl_tenpay (1.1.1)
 
 GEM
-  remote: http://gems.ruby-china.org/
+  remote: https://gems.ruby-china.com/
   specs:
     actionmailer (3.2.14)
       actionpack (= 3.2.14)
@@ -68,6 +68,10 @@ GEM
     audited-activerecord (3.0.0)
       activerecord (~> 3.0)
       audited (= 3.0.0)
+    axlsx (2.0.0)
+      htmlentities (~> 4.3.1)
+      nokogiri (>= 1.4.1)
+      rubyzip (= 0.9.9)
     barby (0.6.2)
     bcrypt-ruby (3.0.1)
     better_errors (2.1.1)
@@ -192,6 +196,7 @@ GEM
     highline (1.7.1)
     hike (1.2.3)
     hitimes (1.2.2)
+    htmlentities (4.3.4)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     http_parser.rb (0.6.0)
@@ -508,6 +513,7 @@ DEPENDENCIES
   alidayu_api
   annotate (>= 2.5.0)
   audited-activerecord (~> 3.0)
+  axlsx
   bcrypt-ruby (~> 3.0.0)
   better_errors
   binding_of_caller
@@ -589,3 +595,6 @@ DEPENDENCIES
   unicorn-worker-killer
   uuidtools
   whenever
+
+BUNDLED WITH
+   1.16.1

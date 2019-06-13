@@ -1,4 +1,4 @@
-source 'http://gems.ruby-china.org/'
+source 'https://gems.ruby-china.com/'
 
 gem 'rails', '3.2.14'
 gem 'mysql2', '0.3.18'
@@ -155,3 +155,4 @@ gem 'rubyntlm', '~> 0.3.2'
 # gem "mq_publisher"#, git: "ssh://git@winwemedia.com:/opt/repos/ec/mq_publisher.git", branch: 'master'
 
 gem 'test-unit'
+gem 'axlsx'

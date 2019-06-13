@@ -1,0 +1,412 @@
+<% title "购物车" %>
+<div class="html cart">
+  <div class="topline">
+    <a href="javascript:;" class="tl_all" id="J_getall">全选</a>
+    <a href="javascript:;" class="tl_ed" id="J_edit">编辑</a>
+  </div>
+  <div class="lists" id="J_lists">
+    <!-- hid:收货地址id pid：商品id num:数量  pnor:规格 ··· -->
+
+    <% if @user.ec_cart_items.joins(:ec_item).where(ec_items: {product_type: EcItem::GIFT}).present? %>
+      <div class="items">
+        <div class="list">
+          <%# EcItem.where(id: @user.ec_cart_items.pluck(:ec_item_id)).gift.each do |item| %>
+          <% @user.ec_cart_items.joins(:ec_item).where(ec_items: {product_type: EcItem::GIFT}).each do |item| %>
+            <% item.destroy if @activity && item.created_at < @activity.expires_in.to_i.days.ago %>
+          <% end %>
+          <% @user.ec_cart_items.joins(:ec_item).where(ec_items: {product_type: EcItem::GIFT}).each do |item| %>
+            <div class="J_item item" data-hid="" data-pid="<%= item.id %>" data-tid="<%= item.ec_item.id %>" data-price="<%= f 0 %>" data-num="<%= item.qty %>" data-zeng="1" data-zengtext="<%= @activity.notice %>" data-name="<%= item.ec_item.ec_product.name %>" data-pimg="<%= item.ec_item.ec_product.ec_pictures.first.try(:format_pic_url) %>">
+              <a href="javascript:;" class="J_pselect pselect" data-today="<%= @activity.is_now_order? ? false : item.created_at.to_date.today? %>" data-expired="<%= item.created_at < @activity.expires_in.to_i.days.ago %>"></a>
+              <div class="pinfo">
+                <a href="<%= wap_item_path(item.ec_item) %>" class="i_pname"><%= item.ec_item.ec_product.name %> <%= item.ec_item.name %>
+                  <img src="<%= item.ec_item.ec_product.ec_pictures.first.try(:format_pic_url) %>" class="i_pimg">
+                </a>
+                <p class="i_zeng"><%= @activity.notice %></p>
+                <div class="i_prica">
+                  <span class="i_pricb">￥</span><%= f 0 %><span class="i_pnum">x<span class="J_num"><%= item.qty %></span></span>
+                  <p class="i_donum"><a href="javascript:;" class="J_minu i_dou">-</a><a href="javascript:;" class="J_plus i_dou i_doua">+</a><span class="J_num"><%= item.qty %></span></p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="items">
+      <% EcShop.where(id: @user.ec_cart_items.pluck(:ec_shop_id)).each do |shop| %>
+        <p class="til"><%= shop.name %></p>
+        <div class="list">
+          <% @user.ec_cart_items.where(ec_shop_id: shop.id).each_with_index do |item, index| %>
+            <% next unless item.ec_item %>
+            <% next if item.ec_item.gift? %>
+            <div class="J_item item" data-hid="<%= item.ec_shop_id %>" data-pid="<%= item.id %>" data-tid="<%= item.ec_item.id %>" data-price="<%= f item.ec_item.price %>" data-num="<%= item.qty %>" data-pnor="<%= item.ec_item.name %>" data-name="<%= [item.ec_item.ec_product.name, item.ec_item.name].join(' ') %>" data-pimg="<%= item.ec_item.ec_product.ec_picture.try(:format_pic_url) %>">
+              <a href="javascript:;" class="J_pselect pselect pselect_active"></a>
+              <div class="pinfo">
+                <a href="<%= wap_item_path(item.ec_item) %>" class="i_pname">
+                  <img src="<%= item.ec_item.ec_product.ec_picture.try(:format_pic_url) %>" class="i_pimg">
+                  <%= item.ec_item.ec_product.name %>
+                </a>
+                <p class="i_pnor">规格：<%= item.ec_item.name %></p>
+                <div class="i_prica">
+                  <span class="i_pricb">￥</span><%= f item.ec_item.price %><span class="i_pnum">x<span class="J_num"><%= item.qty %></span></span>
+                  <p class="i_donum"><a href="javascript:;" class="J_minu i_dou">-</a><a href="javascript:;" class="J_plus i_dou i_doua">+</a><span class="J_num"><%= item.qty %></span></p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if @user.ec_cart_items.where(ec_shop_id: nil).present? %>
+        <p class="til">在线商城</p>
+        <div class="list">
+          <% @user.ec_cart_items.where(ec_shop_id: nil).each_with_index do |item, index| %>
+            <% next unless item.ec_item %>
+            <% next if item.ec_item.gift? %>
+            <div class="J_item item" data-hid="-1" data-pid="<%= item.id %>" data-tid="<%= item.ec_item.id %>" data-price="<%= f item.ec_item.price %>" data-num="<%= item.qty %>" data-pnor="<%= item.ec_item.name %>" data-name="<%= item.ec_item.ec_product.name %>" data-pimg="<%= item.ec_item.ec_product.ec_picture.try(:format_pic_url) %>">
+              <a href="javascript:;" class="J_pselect pselect pselect_active"></a>
+              <div class="pinfo">
+                <a href="<%= wap_item_path(item.ec_item) %>" class="i_pname">
+                  <img src="<%= item.ec_item.ec_product.ec_picture.try(:format_pic_url) %>" class="i_pimg">
+                  <%= item.ec_item.ec_product.name %>
+                </a>
+                <p class="i_pnor">规格：<%= item.ec_item.name %></p>
+                <div class="i_prica">
+                  <span class="i_pricb">￥</span><%= f item.ec_item.price %><span class="i_pnum">x<span class="J_num"><%= item.qty %></span></span>
+                  <p class="i_donum"><a href="javascript:;" class="J_minu i_dou">-</a><a href="javascript:;" class="J_plus i_dou i_doua">+</a><span class="J_num"><%= item.qty %></span></p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="botdos" id="J_edit_d"><a href="javascript:;" class="botdo" id="J_move">移至收藏夹</a><a href="javascript:;" class="botdo botdoa" id="J_del">删除</a></div>
+  <div class="botdos" id="J_edit_m"><span class="allm">合计：<span class="m">￥</span><span class="mon" id="J_mon">0</span></span><span class="tp">不含运费</span><a href="javascript:;" class="botdo botdoa" id="J_statement">结算(<span id="J_numall"></span>)</a></div>
+</div>
+
+<script type="text/javascript">
+  $(function(){
+    var J_getall = $('#J_getall'),
+      J_edit = $('#J_edit'),
+      J_lists = $('#J_lists'),
+      J_item = $('.J_item'),
+      J_mon = $('#J_mon'),
+      J_numall = $('#J_numall'),
+      J_edit_d = $('#J_edit_d'),
+      J_edit_m = $("#J_edit_m"),
+      J_del = $('#J_del'),
+      J_move = $('#J_move'),
+      J_statement = $('#J_statement'),
+      data= {"list":[],"countnum":0,"countprice":0}; // 预定义购物车数据
+
+    var check_qty_result = false;
+
+    J_item.each(function(index){
+      var obj = {},self = $(this),
+        J_pselect = self.find('.J_pselect').eq(0),
+        J_minu = self.find('.J_minu').eq(0),
+        J_plus = self.find('.J_plus').eq(0),
+        J_num = self.find('.J_num');
+
+      // 重组商品数据
+      obj.index = index;
+      obj.hid = parseInt(self.attr('data-hid'));
+      obj.pid = parseInt(self.attr('data-pid'));
+      obj.tid = parseInt(self.attr('data-tid'));
+      obj.price = parseFloat(self.attr('data-price'));
+      obj.num = parseInt(self.attr('data-num'));
+      obj.name = self.attr('data-name');
+      obj.pimg = self.attr('data-pimg');
+      obj.pnor = self.attr('data-pnor')?self.attr('data-pnor'):null;
+      obj.selected = J_pselect.hasClass('pselect_active')?1:0;
+      obj.zeng = self.attr('data-zeng')?1:0;
+      obj.zengtext = obj.zeng?self.attr('data-zengtext'):null;
+
+      data.countnum += obj.selected?obj.num:0;
+      data.countprice += (obj.selected&&!obj.zeng)?obj.num*obj.price:0;
+
+      if (!J_pselect.data('expired') && !J_pselect.data('today')) {
+        data.list.push(obj);
+      }
+
+      //////////// 操作事件////////////
+      // 选择事件
+      J_pselect.click(function(){
+
+        if (J_pselect.data('today')) {
+          CUES.tip({"msg":"当天领取的赠品不能结算","type":"danger"});
+          return false;
+        } else if (J_pselect.data('expired')) {
+          CUES.tip({"msg":"赠品已超过有效期，不能结算","type":"danger"});
+          return false;
+        }
+
+        if(J_pselect.hasClass('pselect_active')){
+          J_pselect.removeClass('pselect_active');
+          obj.selected = 0;
+        }else{
+          J_pselect.addClass('pselect_active');
+          obj.selected = 1;
+        };
+        getcountall();
+      });
+      //商品数量递减
+      J_minu.click(function(){
+        if(obj.zeng){
+          CUES.tip({"msg":"此商品为赠品，不可修改数量","type":"danger"});
+          return false;
+        };
+        obj.num--;
+        if(obj.num==0 || obj.num<0){
+          obj.num = 1;
+          CUES.tip({"msg":"商品数量不能低于1","type":"danger"});
+          return false;
+        };
+
+        $.ajax({ // ajax更新商品数量
+          type: "POST",
+          url: "/wap/cart_items/"+ obj.pid +"/decrease",
+          data: {},
+          dataType: "json",
+          success: function(res){
+            J_num.html(obj.num);
+          }
+        });
+        // J_num.html(obj.num);
+        getcountall();
+      });
+      //商品数量递加
+      J_plus.click(function(){
+        if(obj.zeng){
+          CUES.tip({"msg":"此商品为赠品，不可修改数量","type":"danger"});
+          return false;
+        };
+        $.ajax({ // ajax更新商品数量
+          type: "POST",
+          url: "/wap/cart_items/"+ obj.pid +"/increase",
+          data: {},
+          dataType: "json",
+          success: function(res){
+            if (res.code) {
+              obj.num++;
+              J_num.html(obj.num);
+            } else {
+              CUES.tip({"msg":"库存不足，无法增加数量","type":"danger"});
+            }
+          }
+        });
+        // J_num.html(obj.num);
+        getcountall();
+      });
+
+    });
+
+    J_mon.html(data.countprice);
+    J_numall.html(data.countnum);
+
+    // 全选事件
+    J_getall.click(function(){
+      var self = $(this);
+      if(self.hasClass('tl_all_active')){
+        self.removeClass('tl_all_active');
+        $('.J_pselect').removeClass('pselect_active');
+        data.list.forEach(function(item,index,array){
+          item.selected = 0;
+        });
+      }else{
+        self.addClass('tl_all_active');
+        $('.J_pselect').addClass('pselect_active');
+        $('.J_pselect[data-today="true"]').removeClass('pselect_active');
+        $('.J_pselect[data-expired="true"]').removeClass('pselect_active');
+        data.list.forEach(function(item,index,array){
+          item.selected = 1;
+        });
+      };
+      getcountall(); //计算金额
+    });
+
+    // 计算金额
+    function getcountall(){
+      var list = data.list,len = list.length;
+      data.countprice = 0;
+      data.countnum = 0;
+      for(var i=0;i<len;i++){
+        var v = list[i];
+        data.countnum += v.selected?v.num:0;
+        data.countprice += (v.selected&&!v.zeng)?v.num*v.price:0;
+      };
+      J_mon.html(data.countprice);
+      J_numall.html(data.countnum);
+
+    };
+
+    // 编辑事件
+    J_edit.click(function(){
+      if(J_lists.hasClass('lists_active')){
+        J_edit.html('编辑');
+        J_lists.removeClass('lists_active');
+        J_edit_d.hide();
+        J_edit_m.show();
+      }else{
+        J_edit.html('完成');
+        J_lists.addClass('lists_active');
+        J_edit_d.show();
+        J_edit_m.hide();
+      };
+    });
+
+    var isajax = false; //设置开关 防止重复提交
+
+    //删除商品
+    J_del.click(function(){
+      var arr = [], // 预定义删除购物车商品id
+        haszeng = false;
+
+      var list = data.list,len = list.length;
+      for(var i=0;i<len;i++){
+        var v = list[i];
+        if(v.selected){
+          arr.push(v.pid);
+          if(v.zeng){haszeng = true;};
+        };
+      };
+      if(haszeng){
+        CUES.tip({"msg":"删除商品中含有赠品，无法删除","type":"danger"});
+        return false;
+      };
+      CUES.confirm({"msg":"确认要删除所选商品吗？","callback":function(){
+        isajax = true;
+        // ajax删除
+        $.ajax({ 
+          type: "DELETE",
+          url: "/wap/cart_items/remove_all",
+          data: {arr},
+          dataType: "json",
+          success: function(res){
+            isajax = false;
+            if(res.code){
+
+              CUES.tip({"msg":"删除成功","type":"success","callback":function(){
+                window.location.href = window.location.href; //删除后刷新页面
+              }});
+              for(var i=0;i<len;i++){
+                var v = list[i];
+                if(v.selected){
+                  J_item.eq(v.index).slideUp();
+                };
+              };
+            }
+          }
+        });
+      }})
+    });
+
+    //收藏商品
+    J_move.click(function(){
+      var arr = [], // 预定义收藏购物车商品id
+        haszeng = false;
+
+      var list = data.list,len = list.length;
+      for(var i=0;i<len;i++){
+        var v = list[i];
+        if(v.selected){
+          arr.push(v.pid);
+          if(v.zeng){haszeng = true;};
+        };
+      };
+      if(haszeng){
+        CUES.tip({"msg":"收藏商品中含有赠品，无法收藏","type":"danger"});
+        return false;
+      };
+      isajax = true;
+      // ajax收藏
+      $.ajax({ 
+        type: "POST",
+        url: "/wap/cart_items/move_to_fav",
+        data: {arr},
+        dataType: "json",
+        success: function(res){
+          isajax = false;
+          if(res.code){
+            CUES.tip({"msg":"收藏成功","type":"success"});
+          } else {
+            CUES.tip({"msg":"收藏失败","type":"danger"});
+          }
+        }
+      });
+    });
+
+    function check_multi_qty(){
+      isajax = true;
+      // ajax检查库存
+      $.ajax({ 
+        type: "GET",
+        url: "/wap/cart_items/check_qty",
+        data: {data: data.list},
+        dataType: "json",
+        success: function(res){
+          isajax = false;
+          if(res.code){
+            goorder();
+          } else {
+            CUES.tip({"msg":res.msg,"type":"danger"});
+          }
+        }
+      });
+    }
+
+    // 结算事件
+    J_statement.click(function(){
+      check_multi_qty();
+    });
+
+    function goorder(){
+      var arr = [], // 预定义选中商品数组
+        hids = [],
+        haszeng = false;
+
+      var list = data.list,len = list.length;
+
+      if (len == 0) {
+        CUES.tip({"msg":"当前购物车为空，无法结算","type":"danger"});
+        return false;
+      }
+
+      var p_ids = [];
+
+      for(var i=0;i<len;i++){
+        var v = list[i];
+        if(v.selected){
+          arr.push(v);
+          p_ids.push(v.pid);
+          if(hids.indexOf(v.hid)==-1 && v.hid != 0){
+            hids.push(v.hid);
+          }
+        };
+      };
+      if(hids.length>1){
+        CUES.confirm({"msg":"商品来自不同的收货地址，确认要合并地址购买吗？","callback":function(){
+          gostatement(arr, p_ids);
+        }})
+      }else{
+        gostatement(arr, p_ids);
+      };
+    }
+
+
+
+
+
+    function gostatement(list, p_ids){
+      var obj = {};
+      obj.list = list;
+      obj.countnum = data.countnum;
+      obj.countprice = data.countprice;
+      localStorage.statement = JSON.stringify(obj); // 存储本地 localStorage
+      window.location.href = "/wap/orders/new?from=cart&p_ids="+p_ids; // 跳转页面
+    }
+  });
+</script>

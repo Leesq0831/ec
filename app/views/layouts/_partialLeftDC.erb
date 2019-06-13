@@ -1,0 +1,76 @@
+<ul class="nav nav-list">
+  <li class="<%= ['operating_reports'].include?(controller_name) && ['subscribes','message','article','article_hour','message_hour'].include?(action_name) ? 'open active' : ''%>">
+    <a href="javascript:;" class="dropdown-toggle">
+      <i class="fa fa-weixin"></i>
+      <span class="menu-text"> 数据分析</span>
+      <b class="arrow icon-angle-down"></b>
+    </a>
+    <ul class="submenu" style="display: <%= ['wx_requests'].include?(controller_name) && ['subscribe','message','article','article_hour','message_hour'].include?(action_name) ? 'block' : 'none'%>;">
+      <li class="<%= ['subscribe'].include?(action_name) ? 'open active' : ''%>">
+        <%= link_to subscribe_data_wx_requests_path do %><i class="icon-double-angle-right"></i>关注分析<% end %>
+      </li>
+      <li class="<%= ['message','message_hour'].include?(action_name) ? 'open active' : ''%>">
+        <%= link_to message_data_wx_requests_path do %><i class="icon-double-angle-right"></i>消息分析<% end %>
+      </li>
+      <li class="<%= ['article','article_hour'].include?(action_name) ? 'open active' : ''%>">
+        <%= link_to article_data_wx_requests_path do %><i class="icon-double-angle-right"></i>图文消息分析<% end %>
+      </li>
+
+      <!--<li><a href="/datacube/user_attr"> <i class="icon-double-angle-right"></i>用户属性</a></li>-->
+    </ul>
+  </li>
+
+  <li class="<%= 'open active' if controller_name == 'wx_requests' && action_name == 'keyword' %>">
+    <!--<a href="javascript:;" class="dropdown-toggle">-->
+      <!--<i class="icon-sitemap"></i>-->
+      <!--<span class="menu-text">关键词数据</span>-->
+      <!--<b class="arrow icon-angle-down"></b>-->
+    <!--</a>-->
+    <ul class="submenu">
+      <li class="<%= 'open active' if controller_name == 'wx_requests' && action_name == 'keyword' %>">
+        <%= link_to keyword_data_wx_requests_path do %> <i class="icon-double-angle-right"></i>命中分析<% end %>
+      </li>
+    </ul>
+  </li>
+<!--
+  <%= content_tag :li, class: (current_page?(data_sites_path) || current_page?(data_wx_requests_path) ? 'open active' : '') do %>
+    <a href="javascript:;" class="dropdown-toggle">
+      <i class="fa fa-signal"></i>
+      <span class="menu-text"> 流量数据</span>
+      <b class="arrow icon-angle-down"></b>
+    </a>
+    <ul class="submenu" style="display: <%= current_page?(data_sites_path) || current_page?(data_wx_requests_path) ? 'block' : 'none'%>;">
+      <li class="<%= current_page?(data_sites_path) ? 'open active' : '' -%>">
+        <%= link_to data_sites_path do %><i class="icon-double-angle-right"></i>数据指标<% end %>
+      </li>
+      <li class='<%= current_page?(data_wx_requests_path) ? 'open active' : '' -%>'>
+        <%= link_to data_wx_requests_path do %><i class="icon-double-angle-right"></i>请求分析<% end %>
+      </li>
+    </ul>
+  <% end %>
+ -->
+  <% if current_site && current_site.has_privilege_for?(2) %>
+  <li class="<%= 'open active' if controller_name == 'vip_users' %>">
+    <a href="javascript:;" class="dropdown-toggle">
+      <i class="fa fa-users"></i>
+      <span class="menu-text"> 会员数据</span>
+      <b class="arrow icon-angle-down"></b>
+    </a>
+    <ul class="submenu" style="display: <%= controller_name == "vip_users" ? 'block' : 'none'%>;">
+      <li class="<%= "open active" if action_name == "index" %>">
+        <a href="<%= data_vip_users_path %>"> <i class="icon-double-angle-right"></i>会员数</a>
+      </li>
+      <li class="<%= "open active" if action_name == "amount" && @type == "pay_up" %>">
+        <a href="<%= amount_data_vip_users_path(type: "pay_up") %>"> <i class="icon-double-angle-right"></i>会员充值</a>
+      </li>
+      <li class="<%= "open active" if action_name == "amount" && @type == "pay_down" %>">
+        <a href="<%= amount_data_vip_users_path(type: "pay_down") %>"> <i class="icon-double-angle-right"></i>会员消费</a>
+      </li>
+      <li class="<%= "open active" if action_name == "point" %>">
+        <a href="<%= point_data_vip_users_path %>"> <i class="icon-double-angle-right"></i>会员积分</a>
+      </li>
+    </ul>
+  </li>
+  <% end %>
+
+</ul>

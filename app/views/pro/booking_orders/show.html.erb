@@ -1,0 +1,106 @@
+<form>
+  <div class="modal-body">
+    <p>
+      <span> <b>订单号：</b>
+      </span>
+      <span><%= @booking_order.order_no %></span>
+    </p>
+    <p>
+      <span>
+          <b>订单状态：</b>
+      </span>
+      <span><%= @booking_order.status_name %></span>
+    </p>
+    <p>
+      <span>
+          <b>预定时间：</b>
+      </span>
+      <span><%= @booking_order.booking_at %></span>
+    </p>
+
+    <p>
+      <span>
+          <b>下单时间：</b>
+      </span>
+      <span><%= @booking_order.created_at %></span>
+    </p>
+    <p>
+      <span> <b>商品分类：</b>
+      </span>
+      <span>
+        <%= @booking_order.booking_item.try(:booking_category).try(:com_str, [@booking_order.booking_item.try(:booking_category).try(:name)]) %>
+      </span>
+    </p>
+    <p>
+      <span> <b>商品名称：</b>
+      </span>
+      <span><%= @booking_order.booking_item.try(:name) %></span>
+    </p>
+
+    <p>
+      <span><b>数量：</b></span>
+      <span><%= @booking_order.qty %></span>
+    </p>
+    <p>
+      <span> <b>商品价格：</b>
+      </span>
+      <span><%= @booking_order.price.to_f %></span>
+    </p>
+    <p>
+      <span> <b>配送费用：</b>
+      </span>
+      <span><%= @booking_order.deliver_amount.to_f %></span>
+    </p>
+    <p>
+      <span> <b>会员优惠：</b>
+      </span>
+      <span><%= @booking_order.discount.to_f %></span>
+    </p>
+    <p>
+      <span> <b>订单总额：</b>
+      </span>
+      <span><%= @booking_order.total_amount.to_f %></span>
+    </p>
+    <p>
+      <span> <b>支付金额：</b>
+      </span>
+      <span><%= @booking_order.pay_amount.to_f %></span>
+    </p>
+
+    <p>
+      <span> <b>联系人：</b>
+      </span>
+      <span><%= @booking_order.username %></span>
+    </p>
+    <p>
+      <span>
+          <b>手机号码：</b>
+      </span>
+      <span><%= @booking_order.tel %></span>
+    </p>
+
+    <p>
+      <span>
+          <b>地址：</b>
+      </span>
+      <span><%= @booking_order.address %></span>
+    </p>
+    <% if @booking_order.express.present?%>
+      <p>
+        <b>快递公司：</b>
+        <span><%= @booking_order.express %></span>
+      </p>
+    <% end %>
+    <p>
+      <span>
+          <b>备注：</b>
+      </span>
+      <span><%= @booking_order.description %></span>
+    </p>
+  </div>
+  <div class="clearfix"></div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-primary" data-fn="submit" onclick="$('.modal-backdrop', window.parent.document).remove();$('.modal-iframe', window.parent.document).remove();">确定</button>
+    <button type="button" class="btn btn-sm btn-default" data-dismiss="modals">取消</button>
+  </div>
+</form>

@@ -1,0 +1,9 @@
+<% title "分类" %>
+<div class="html classify">
+  <% @categories.each do |category| %>
+    <a href="<%= wap_items_path(category_id: category.id) %>" class="item">
+      <img src="<%= category.format_pic_url %>" class="iban">
+      <div class="itext"><%= category.name %></div>
+    </a>
+  <% end %>
+</div>

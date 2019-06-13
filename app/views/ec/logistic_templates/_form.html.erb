@@ -1,0 +1,279 @@
+<%= form_for [@logistic_template], html: {class: "form-horizontal", id: "logistic_template_form", role: "form"} do |f|%>
+    <%#= f.hidden_field :shop_id %>
+    <div class="form-group">
+      <label class="control-label col-lg-1 col-md-2 col-sm-2 col-xs-2">模板名称<span class="red">*</span></label>
+      <div class="col-lg-5 col-md-5 col-sm-6 col-xs-6">
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-1 col-md-2 col-sm-2 col-xs-2">计价方式</label>
+      <div class="col-lg-5 col-md-5 col-sm-6 col-xs-6">
+
+        <% EcLogisticTemplate.valuation_methods.each do |k, v| %>
+            <label class="radio">
+              <%= f.radio_button :valuation_method, v, checked: @logistic_template.valuation_method == v, val: k, disabled: f.object.new_record? ? false : true %><span class="lbl">  <%= EcLogisticTemplate::ValuationMethodHuman[k.to_sym] %></span>
+            </label>
+        <% end %>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-1 col-md-2 col-sm-2 col-xs-2">运送方式</label>
+      <div class="col-lg-5 col-md-5 col-sm-6 col-xs-6">
+        <label class="checkbox">
+          <input type="checkbox" value="红色" name="1" checked="checked" disabled> <span class="lbl">  快递</span>
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-lg-1 col-md-2 col-sm-2 col-xs-2">运费配置</label>
+      <div class="col-lg-11 col-md-10 col-sm-12 col-xs-12">
+        <div id="product-types-table">
+          <% EcLogisticTemplate.valuation_methods.each do |k, v| %>
+              <%= render k, {f: f, k: k} %>
+          <% end %>
+        </div>
+        <a class="btn btn-sm btn-info J-addTemplate">为指定地区设置运费</a>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-lg-offset-1 col-md-offset-2 col-sm-offset-2 col-xs-offset-2 col-lg-11 col-md-10 col-sm-10 col-xs-10">
+        <input type="submit" class="btn btn-sm btn-success" value="保存"/>
+        <input type="reset" class="btn btn-sm" data-dismiss="modal" value="取消" onclick="window.history.go(-1);"/>
+      </div>
+    </div>
+<% end %>
+<%= render 'cities' %>
+<% content_for :custom_js do %>
+<script>
+    function showTip(type, str) {
+        PNotify.removeAll();
+        type = {
+            "success": "",
+            "warning": 'error'
+        }[type];
+        var delay = type == 'error' ? 3000 : 1000;
+        new PNotify({
+            title: '通知',
+            text: str,
+            type: type,
+            remove: true,
+            delay: delay
+        });
+        return false;
+    }
+    $(function(){
+        $("[data-dq=sheng]").on("click",function(){
+            var $this = $(this),
+                    $val = $this.val(),
+                    $children = $("[data-sheng="+$val+"]");
+            if($this.is(":checked")){
+                $children.prop("checked",true);
+            }else{
+                $children.prop("checked",false);
+            }
+        });
+        $("[data-sheng]").on("click",function(){
+            var $this = $(this),
+                    $val = $this.attr("data-sheng"),
+                    $sib = $("[data-sheng="+$val+"]"),
+                    $par = $("[data-dq][value="+$val+"]"),
+                    flag = $this.is(":checked");
+            $sib.each(function(){
+                var $self = $(this);
+                if(!$self.is(":checked")){
+                    flag = false;
+                }
+            });
+            if(flag){
+                $par.prop("checked",true);
+            }else{
+                $par.prop("checked",false);
+            }
+        });
+        var $input,$span;
+        $(".table").on("click","[data-toggle=modal]",function(){
+            $("#editPostModal input[type=checkbox]").prop("checked",false);
+            $('#editPostModal table').show();
+            var $this = $(this);
+            $input = $this.next("input");
+            $span = $this.siblings("span");
+            var $val = $input.val(),
+                    $arr = $val.split(",");
+            for(i in $arr){
+                $("[data-sheng]").each(function(){
+                    var $this = $(this);
+                    if($this.val() == $arr[i]){
+                        $this.prop("checked",true);
+                    }
+                });
+            }
+            $("[data-dq]").each(function(){
+                var $this = $(this),
+                        $val = $this.val(),
+                        flag = true;
+                $("[data-sheng="+$val+"]").each(function(){
+                    if(!$(this).is(":checked")){
+                        flag = false;
+                    }
+                });
+                $this.prop("checked",flag);
+            });
+        });
+        $(".btn-cities").on("click",function(){
+            var val = "";
+            $("[data-sheng]").each(function(){
+                if($(this).is(":checked")){
+                    var temp = $(this).val();
+                    if(val == ""){
+                        val+=temp;
+                    }else{
+                        val +=","+temp;
+                    }
+                }
+            });
+            $("#editPostModal input[type=checkbox]").prop("checked",false);
+            $input.val(val);
+            $span.text(val);
+            $input = $span = "";
+        });
+        $('a.J-addTemplate').click(function(){
+            var vm = $('input[type=radio]:checked').attr("val");
+            var template = $("[template_class='template_"+ vm +"'] tr");
+            var uuid = Date.now();
+            var tool =  $('#table_'+vm+' tr:visible:last');
+            var new_template = template.clone(true).insertAfter(tool).show();
+            var td = new_template.find('td');
+            td.eq(0).find('input').attr('name', 'ec_logistic_template[ec_logistic_template_items_attributes]['+uuid+'][_destroy]');
+            td.eq(1).find('input').attr('name', 'ec_logistic_template[ec_logistic_template_items_attributes]['+uuid+'][cities_str]');
+            if(vm == 'weight'){
+                td.eq(2).find('input').attr('name', 'ec_logistic_template[ec_logistic_template_items_attributes]['+uuid+'][first_unit]');
+                td.eq(3).find('input').attr('name', 'ec_logistic_template[ec_logistic_template_items_attributes]['+uuid+'][first_unit_freight]');
+                td.eq(4).find('input').attr('name', 'ec_logistic_template[ec_logistic_template_items_attributes]['+uuid+'][add_unit]');
+                td.eq(5).find('input').attr('name', 'ec_logistic_template[ec_logistic_template_items_attributes]['+uuid+'][add_unit_freight]');
+            }
+            else if(vm == 'money'){
+                td.eq(2).find('input').attr('name', 'ec_logistic_template[ec_logistic_template_items_attributes]['+uuid+'][single_order_amount]');
+                td.eq(3).find('input').attr('name', 'ec_logistic_template[ec_logistic_template_items_attributes]['+uuid+'][single_order_amount_freight]');
+            }
+        });
+        $('input[type=radio]').click(function(){
+            var vm = $('input[type=radio]:checked').attr("val");
+            $('table').each(function(){
+                if($(this).attr('id') == 'table_' + vm ){
+                    $(this).show();
+                }else{
+                    $(this).hide();
+                }
+            });
+        });
+        $(document).on("click",".table .btn-remove",function(){
+            var $tr=$(this).parents("tr"),
+                    message=$(this).data('message')||"确定需要删除么？";
+            confirmMessage(message,function(){
+                $tr.find('td:first input[type=checkbox]').prop("checked",true);
+                $tr.hide();
+            });
+        });
+        $('input[type=submit]').click(function(){
+            var flag = true;
+            if(!$('#ec_logistic_template_name').val()){
+                showTip('warning', '模板名称不能为空!');
+                $('#ec_logistic_template_name').focus();
+                return false;
+            }
+            $('.logistic_template:hidden tr').each(function(){
+                $(this).find('td').eq(0).find('input[type=checkbox]').prop("checked",true);
+            });
+            $('.logistic_template:visible tr:visible').each(function(i, e){
+                if(i != 0){
+                    var vm = $('input[type=radio]:checked').attr("val");
+                    var float_reg = /^[+]?[0-9]+(\.[0-9]{1,2})?$/;
+                    if(!$(this).find('td').eq(1).find('input').val()){
+                        showTip('warning', '运费配置第'+i+'条目的地未选择!');
+                        flag = false;
+                        return false;
+                    }
+                    if(vm == 'weight'){
+                        if(!$(this).find('td').eq(2).find('input').val()){
+                            showTip('warning', '首重不能为空!');
+                            flag = false;
+                            $(this).find('td').eq(2).find('input').focus();
+                            return false;
+                        }
+                        if(!float_reg.test($(this).find('td').eq(2).find('input').val())){
+                            showTip('warning', '首重必须为大于等于0的小数，且只支持两位小数!');
+                            flag = false;
+                            $(this).find('td').eq(2).find('input').focus();
+                            return false;
+                        }
+                        if(!$(this).find('td').eq(3).find('input').val()){
+                            showTip('warning', '运费不能为空!');
+                            flag = false;
+                            $(this).find('td').eq(3).find('input').focus();
+                            return false;
+                        }
+                        if(!float_reg.test($(this).find('td').eq(3).find('input').val())){
+                            showTip('warning', '运费必须为大于等于0的小数，且只支持两位小数!');
+                            flag = false;
+                            $(this).find('td').eq(3).find('input').focus();
+                            return false;
+                        }
+                        if(!$(this).find('td').eq(4).find('input').val()){
+                            showTip('warning', '续重不能为空!');
+                            flag = false;
+                            $(this).find('td').eq(4).find('input').focus();
+                            return false;
+                        }
+                        if(!float_reg.test($(this).find('td').eq(4).find('input').val())){
+                            showTip('warning', '续重必须为大于等于0的小数，且只支持两位小数!');
+                            flag = false;
+                            $(this).find('td').eq(4).find('input').focus();
+                            return false;
+                        }
+                        if(!$(this).find('td').eq(5).find('input').val()){
+                            showTip('warning', '运费不能为空!');
+                            flag = false;
+                            $(this).find('td').eq(5).find('input').focus();
+                            return false;
+                        }
+                        if(!float_reg.test($(this).find('td').eq(5).find('input').val())){
+                            showTip('warning', '运费必须为大于等于0的小数，且只支持两位小数!');
+                            flag = false;
+                            $(this).find('td').eq(5).find('input').focus();
+                            return false;
+                        }
+                    }
+                    else if(vm == 'money'){
+                        if(!$(this).find('td').eq(2).find('input').val()){
+                            showTip('warning', '订单金额不能为空!');
+                            flag = false;
+                            $(this).find('td').eq(2).find('input').focus();
+                            return false;
+                        }
+                        if(!float_reg.test($(this).find('td').eq(2).find('input').val())){
+                            showTip('warning', '订单金额必须为大于等于0的小数，且只支持两位小数!');
+                            flag = false;
+                            $(this).find('td').eq(2).find('input').focus();
+                            return false;
+                        }
+                        if(!$(this).find('td').eq(3).find('input').val()){
+                            showTip('warning', '运费不能为空!');
+                            flag = false;
+                            $(this).find('td').eq(3).find('input').focus();
+                            return false;
+                        }
+                        if(!float_reg.test($(this).find('td').eq(3).find('input').val())){
+                            showTip('warning', '运费必须为大于等于0的小数，且只支持两位小数!');
+                            flag = false;
+                            $(this).find('td').eq(3).find('input').focus();
+                            return false;
+                        }
+                    }
+                }
+            });
+            return flag;
+        });
+    });
+</script>
+<% end %>

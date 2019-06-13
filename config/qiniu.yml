@@ -1,0 +1,20 @@
+defaults: &defaults
+  access_key: '1-UC1K4LYkMG9g3Z460sQ9SJDOtVudWFmqeHZL3P'
+  secret_key: 'AJXceZNjZaGyaUVQwWPZ1rkL70aHc0Zq9C8zFvj2'
+  bucket_pictures: 'zhishang'
+  bucket_media: 'zhishang'
+  bucket_views720: 'zhishang'
+  bucket_wmall: 'zhishang'
+  domain: 'zhishangtech.top'
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

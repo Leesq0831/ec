@@ -1,0 +1,119 @@
+<% title @shop.name %>
+
+<div class="html hotel_detial">
+  <div class="swipe" id="J_banner">
+    <div class="J_main banner">
+      <% @shop.ec_pictures.each do |picture| %>
+        <a href="javascript:;" class="J_fig fig"><img src="<%= picture.format_shop_banner_pic_url %>" class="bimg"></a>
+      <% end %>
+    </div>
+  </div>
+
+  <p class="title"><%= @shop.name %></p>
+  <p class="hd_hits">
+    <% @shop.ec_tags.each do |shop_tag| %>
+      <a href="javascript:;" class="hd_hit"><%= shop_tag.name %></a>
+    <% end %>
+  </p>
+  <div class="hd_lix">
+    <a href="<%= baidu_map_address_http(@shop.location_y, @shop.location_x, @shop.address_display) %>" class="ht_map"><%= @shop.address_display %></a>
+    <a href="tel:<%= @shop.tel %>" class="hd_tel"></a>
+  </div>
+
+  <% if @ec_shop_recommends.count > 0 %>
+    <div class="itembox">
+      <p class="itembox_til">搭配推荐</p>
+      <div class="itembox_cont">
+        <div class="goctbox swipe" id="J_goct">
+          <div class="J_main goct">
+            <% @ec_shop_recommends.each do |shop_recommend| %>
+              <a href="javascript:;" class="J_fig fig">
+                <img src="<%= shop_recommend.format_pic_url %>" class="bimg">
+              </a>
+            <% end %>
+          </div>
+          <div class="itgocr">
+            <div class="J_vice itgocrs">
+              <% @ec_shop_recommends.each do |shop_recommend| %>
+                <% if shop_recommend.ec_items[0].present? %>
+                  <a href="<%= wap_item_path(shop_recommend.ec_items[0], shop_id: @shop.id) %>" class="J_fig fig"><img src="<%= shop_recommend.ec_items[0].try(:format_pic_url) %>" class="itgocrimg"><span class="itgocrp">￥<%= f shop_recommend.ec_items[0].try(:price) %></span></a>
+                <% else %>
+                  <a href="javascript:;" class="J_fig fig"><span class="itgocrp"></span></a>
+                <% end %>
+              <% end %>
+            </div>
+            <div class="J_vice itgocrs">
+              <% @ec_shop_recommends.each do |shop_recommend| %>
+                <% if shop_recommend.ec_items[1].present? %>
+                  <a href="<%= wap_item_path(shop_recommend.ec_items[1], shop_id: @shop.id) %>" class="J_fig fig"><img src="<%= shop_recommend.ec_items[1].try(:format_pic_url) %>" class="itgocrimg"><span class="itgocrp">￥<%= f shop_recommend.ec_items[1].try(:price) %></span></a>
+                <% else %>
+                  <a href="javascript:;" class="J_fig fig"><span class="itgocrp"></span></a>
+                <% end %>
+              <% end %>
+            </div>
+            <div class="J_vice itgocrs">
+              <% @ec_shop_recommends.each do |shop_recommend| %>
+                <% if shop_recommend.ec_items[2].present? %>
+                  <a href="<%= wap_item_path(shop_recommend.ec_items[2], shop_id: @shop.id) %>" class="J_fig fig"><img src="<%= shop_recommend.ec_items[2].try(:format_pic_url) %>" class="itgocrimg"><span class="itgocrp">￥<%= f shop_recommend.ec_items[2].try(:price) %></span></a>
+                <% else %>
+                  <a href="javascript:;" class="J_fig fig"><span class="itgocrp"></span></a>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @shop.description.present? %>
+    <div>
+      <%= raw @shop.description %>
+    </div>
+  <% end %>
+</div>
+
+<a href="<%= goto_wap_shop_path(@shop) %>" class="hd_bot">去选酒送这家</a>
+
+<script type="text/javascript">
+  $(function(){
+    <% if @shop.ec_pictures.count > 0 %>
+      new Swipe({
+        elm:document.getElementById('J_banner')
+      });
+    <% end %>
+
+    <% if @ec_shop_recommends.count > 0 %>
+      new Swipe({
+        elm:document.getElementById('J_goct'),
+        interval:4000 // 时间间隔  毫秒
+      });
+    <% end %>
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,449 @@
+<% title "#{@product.name} #{@item.name}" %>
+
+<div class="html product">
+  <% if @product.ec_pictures.count > 0 %>
+    <div class="swipe" id="J_banner">
+      <div class="J_main banner">
+        <% @product.ec_pictures.each do |picture| %>
+          <a href="javascript:;" class="J_fig fig"><img src="<%= picture.try(:format_pic_url, {width: 500, height: 500}) %>" class="bimg"></a>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="topinfo">
+    <p class="title"><%= @item.ec_product.name %></p>
+    <p class="pr_price">￥<span class="pr_prnew"><%= f @item.price %></span><span class="oldprice">￥<%= f @item.market_price %></span></p>
+    <!-- <p class="ht_hits">
+      <%# @product.ec_tags.each do |tag| %>
+        <a href="javascript:;" class="ht_hit"><%#= tag.name %></a>
+      <%# end %>
+    </p> -->
+
+    <p class="ht_hits">
+      <% @item.ec_product.ec_items.show.each do |item| %>
+        <a href="<%= wap_item_path(item) %>" class="ht_hit" style="<%= 'border-color: grey; color: grey;' if @item != item %>"><%= item.name %></a>
+      <% end %>
+    </p>
+    <p class="pr_seps">
+      <a href="javascript:;" class="pr_sep">已售<%= @item.display_sold_qty || @item.sold_qty || 0 %>件</a>
+      <a href="javascript:;" class="pr_sep pr_sepa"><span id="J_freight">0</span>元邮费</a>
+    </p>
+  </div>
+
+  <div class="formline mt10 pr_adr">
+    <div class="fline">
+      <span class="pr_adr_ado ado">配送至：</span>
+      <div class="pr_adr_l">
+        <p class="pr_adr_t">
+          <select class="ctrol ctrol_select" id="J_sheng">
+            <option value="0">选择省</option>
+            <% Province.pluck(:id, :name).each do |province| %>
+                <% if @default_city.province_id == province[0] %>
+                    <option value="<%= province[0] %>" selected="selected"><%= province[1] %></option>
+                <% else %>
+                    <option value="<%= province[0] %>"><%= province[1] %></option>
+                <% end %>
+            <% end %>
+          </select>
+          <select class="ctrol ctrol_select" id="J_shi">
+            <option value="0">选择市</option>
+            <% @default_city.province.cities.pluck(:id, :name).each do |city| %>
+                <% if @default_city.id == city[0] %>
+                    <option value="<%= city[0] %>" selected="selected"><%= city[1] %></option>
+                <% else %>
+                    <option value="<%= city[0] %>"><%= city[1] %></option>
+                <% end %>
+            <% end %>
+          </select>
+        </p>
+      </div>
+    </div>
+    <div class="fline">
+      <span class="pr_adr_ado ado">数量：</span><p class="input_line"><input type="number" class="ctrol ctrol_l" placeholder="请填写数量" value="1"></p>
+    </div>
+  </div>
+  <div class="shoppai">
+    <img src="/wap/assets/images/logo.png" class="pailg">
+    <p class="paitil">喝吧</p>
+    <p class="ovh">
+      <span class="paiht">真酒保证</span>
+      <span class="paiht">直送餐厅</span>
+    </p>
+    <a href="/wap" class="goshop">进店铺首页</a>
+  </div>
+  <div class="prtabbox">
+    <p class="tabnav" id="J_tabnav">
+      <a href="javascript:;" class="J_tab tab tab_active" data-eq="0">图文详情</a>
+      <a href="javascript:;" class="J_tab tab" data-eq="1">商品属性</a>
+      <a href="javascript:;" class="J_tab tab" data-eq="2">评价(<%= @item.ec_comments.count %>)</a>
+    </p>
+  </div>
+  <div class="tabboxs" id="J_tabboxcont">
+    <!-- 图文详情 -->
+    <div class="J_tabbox tabbox">
+      <%= raw @product.description %>
+      <!-- <img src="img/img09.jpg"> -->
+    </div>
+    <!-- 商品属性 -->
+    <div class="J_tabbox tabbox dsn">
+      <div class="formline">
+        <% @product.ec_parameters.each do |parameter| %>
+          <div class="fline">
+            <span class="ado"><%= parameter.key %></span>
+            <div class="text_line"><%= parameter.value %></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <!-- 评价 -->
+    <div class="J_tabbox tabbox dsn">
+      <p class="pr_shais">
+        <a href="javascript:;" class="J_pr_shai pr_shai pr_shai_active" data-type="1">全部(<%= @item.ec_comments.count %>)</a>
+        <a href="javascript:;" class="J_pr_shai pr_shai" data-type="2">好评(<%= @item.ec_comments.high.count %>)</a>
+        <a href="javascript:;" class="J_pr_shai pr_shai" data-type="3">中评(<%= @item.ec_comments.middle.count %>)</a>
+        <a href="javascript:;" class="J_pr_shai pr_shai" data-type="4">差评(<%= @item.ec_comments.low.count %>)</a>
+      </p>
+
+      <% if @item.ec_comments.blank? %>
+        <!-- 订单为空的时候使用以下代码 start -->
+        <div class="empty dsn">
+          <img src="/wap/assets/images/adr_em.png" class="eimg">
+          <p class="etext">暂无评价</p>
+        </div>
+        <!-- end -->
+      <% else %>
+        <div class="pr_jugs" id="J_pr_jugs"></div>
+        <a href="javascript:;" class="nomore" id="J_more"><img src="/wap/assets/images/nomore.png" class="noimg"><span id="J_moretext"></span></a>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="pro_bot">
+  <a href="javascript:;" class="pro_bot_ls pro_bot_lsl <%= 'pro_bot_ls_col' if @user.ec_items.include?(@item) %>" id="J_collect">
+    <% if @user.ec_items.include?(@item) %>
+      <p class="icon icona"></p><p class="name">已收藏</p>
+    <% else %>
+      <p class="icon icona"></p>
+      <p class="name">收藏</p>
+    <% end %>
+  </a>
+  <a href="<%= wap_cart_items_path %>" class="pro_bot_ls pro_bot_lsl">
+    <p class="icon iconb"><span class="num" id="J_pnum"><%= @user.ec_cart_items.sum(:qty) %></span></p>
+    <p class="name">购物车</p>
+  </a>
+  <% if @item.product? %>
+    <a href="javascript:;" class="pro_bot_ls pro_bot_btn" id="J_addcart"><p class="botin">加入购物车</p></a>
+    <a href="javascript:;" class="pro_bot_ls pro_bot_btn pro_bot_btna" id="J_buynow"><p class="botin">立即购买</p></a>
+  <% end %>
+</div>
+<script type="text/javascript">
+  $(function(){
+    // !!!!!!!!!!!!!!!!下面的data对象由后端渲染，用于后面的数据提交
+    var data = {
+      "hid":1,// 可由省市id拼接而成
+      "name":"拉菲传奇波尔多干红葡萄酒",// 产品名称
+      "num":1,// 购买数量默认为1
+      "pid":23,// 商品id
+      "pimg":"img/img01.png",// 商品购物车所用的缩略图片
+      "pnor":"一件",// 产品规格，无则渲染null
+      "price":480,// 产品价格
+      "zeng":0,// 是否赠品 0,1
+      "hid":"此商品为活动赠品，60天有效" // 赠品描述
+    };
+
+    <% if @product.ec_pictures.count > 0 %>
+      new Swipe({
+        elm:document.getElementById('J_banner')
+      });
+    <% end %>
+
+    var J_sheng = $("#J_sheng"),
+      J_shi = $('#J_shi'),
+      J_tabnav = $('#J_tabnav'),
+      J_tab = $('.J_tab'),
+      J_tabbox = $('.J_tabbox'),
+      J_tabboxcont = $('#J_tabboxcont'),
+      J_collect = $('#J_collect'),
+      J_addcart = $('#J_addcart'),
+      J_buynow = $('#J_buynow');
+
+    var win = $(window),
+      oftop = J_tabnav.offset().top,
+      sco = '',
+      sc = getRequest();
+
+    J_tabboxcont.attr('style','min-height:'+(win.height()-0.6*window.rem-44)+'px')
+
+    win.scroll(function(){
+      clearTimeout(sco);
+      sco = setTimeout(function(){
+        var so = win.scrollTop();
+        if(so>oftop){
+          J_tabnav.addClass('tabnav_fixed');
+        }else{
+          J_tabnav.removeClass('tabnav_fixed');
+        }
+      },20)
+    });
+
+    // 省市区联动
+    J_sheng.change(function(){
+      var vid = $(this).val();
+      console.log(vid)
+      if(vid==0){// 表示未选择
+        J_shi.html('<option value="0">选择市</option>');
+      }else{
+        isajax = true;
+        // ajax请求市内容
+        $.ajax({
+          type: "GET",
+          url: "/wap/cities?province_id="+vid,
+          data: {},
+          dataType: "json",
+          success: function(res){
+            isajax = false;
+            if(res.code){
+              var dt = res.data,len = dt.length,str = '';
+              for(var i=0;i<len;i++){
+                var v = dt[i];
+                str+='<option value="'+v.id+'">'+v.name+'</option>';
+              };
+              J_shi.html('<option value="0">选择市</option>'+str);
+            }
+          }
+        });
+      }
+    });
+
+    J_shi.change(function(){
+      calc_freight();
+    })
+
+
+
+    J_tab.click(function(){
+      var self = $(this),eq = parseInt(self.attr('data-eq'));
+      J_tabbox.hide();
+      J_tab.removeClass('tab_active');
+      self.addClass('tab_active');
+      J_tabbox.eq(eq).show();
+      setTimeout(function(){
+        win.scrollTop(oftop+1);
+      },10);
+    });
+
+    // 评论部分
+    var J_pr_jugs = $('#J_pr_jugs'),
+      J_pr_shai = $('.J_pr_shai'),
+      J_more = $('#J_more'),
+      J_moretext = $('#J_moretext');
+      jdata = {"type":1,"page":1,"pagesize":8}, // 默认全部 type：1 根据情况修改
+      isajax = false,//设置开关 防止重复提交;
+      isdone = false, // 数据是否加载完毕;
+      ajax = '';
+
+    J_pr_shai.click(function(){
+      var type = $(this).attr('data-type');
+      $('.J_pr_shai').removeClass('pr_shai_active');
+      $(this).addClass('pr_shai_active');
+      jdata = {"type":type,"page":1,"pagesize":8}, // 默认全部 type：1 根据情况修改
+      ajax.abort(); // 终止正在进行的ajax
+      getajax(true); //获取列表数据
+    });
+
+    // 获取首次列表数据
+    getajax();
+
+    function getajax(first){
+      if(first){
+        J_pr_jugs.html('');
+        isdone = false;
+      };
+      // ajax获取列表数据
+      isajax = true;
+      J_moretext.html("正在加载···");
+      ajax = $.ajax({
+        type: "GET",
+        url: "/wap/items/<%= @item.id %>",
+        data: {jdata},
+        dataType: "json",
+        success: function(res){
+          if(res.code){
+            var dt = res.data,len = dt.length,str = '';
+            for(var i=0;i<len;i++){
+              var v = dt[i];
+              var rp = v.reply?'<div class="pr_rp"><p class="pr_rp_til">回复：</p><p class="pr_rp_text">'+v.reply+'</p></div>':'';
+              str += '<div class="pr_jitem">\
+                  <div class="pr_jt">\
+                    <img src="'+v.headimg+'" class="pt_jh">\
+                    <p class="pr_jname">'+v.name+'</p>\
+                    <p class="pr_jstrs">'+backstr(parseInt(v.star))+'</p>\
+                    <p class="pr_jtime">'+v.time+'</p>\
+                  </div>\
+                  <p class="pr_jb">'+v.comment+'</p>'+rp+'\
+                </div>';
+            };
+            if((jdata.pagesize * jdata.page) >= res.total){
+              isdone = true;
+              J_moretext.html("没有更多了");
+            }else{
+              J_moretext.html("点击加载更多");
+            };
+
+            J_pr_jugs.append(str);
+          }
+        }
+      });
+    };
+    function backstr(num){
+      var str = '';
+      for(var i=0;i<num;i++){
+        str += '<span class="pr_jstr"></span>';
+      };
+      return str;
+    }
+
+    // 点击加载更多
+    J_more.click(function(){
+      if(isdone){
+        CUES.tip({"msg":"没有更多了","type":"danger"});
+        return false;
+      };
+      jdata.page++;
+      getajax();
+    });
+
+    //收藏
+    J_collect.click(function(){
+      var self = $(this);
+      // if(self.hasClass('pro_bot_ls_col')){
+      //   CUES.tip({"msg":"您已收藏此商品","type":"danger"});
+      // }else{
+        console.log(sc.pid);
+        $.ajax({ //收藏ajax
+          type: "POST",
+          url: "/wap/items/<%= @item.id %>/add_fav",
+          data: {},
+          dataType: "json",
+          success: function(res){
+            if(res.code == 1){
+              CUES.tip({"msg":"收藏成功","type":"success"});
+              self.addClass('pro_bot_ls_col');
+              self.html('<p class="icon icona"></p><p class="name">已收藏</p>')
+            } else if(res.code == 2){
+              CUES.tip({"msg":"取消收藏成功","type":"success"});
+              self.removeClass('pro_bot_ls_col');
+              self.html('<p class="icon icona"></p><p class="name">收藏</p>')
+            } else {
+              CUES.tip({"msg":"收藏失败","type":"success"});
+            }
+          }
+        });
+      // }
+    });
+
+    // 加入购物车
+    J_addcart.click(function(){
+      var self = $(this);
+
+      var J_pnum = $('#J_pnum').html();
+      console.log(J_pnum);
+      $.ajax({ //收藏ajax
+        type: "POST",
+        url: "/wap/items/<%= @item.id %>/add_cart",
+        data: {},
+        dataType: "json",
+        success: function(res){
+          if(res.code){
+            CUES.tip({"msg":"成功加入购物车","type":"success"});
+            $('#J_pnum').html(parseInt(J_pnum)+1);
+          } else {
+            CUES.tip({"msg":"库存不足","type":"danger"});
+          }
+        }
+      });
+    });
+
+    J_buynow.click(function(){
+      var enable_buy = false;
+
+      if ($('.ctrol_l').val() < 1) {
+        CUES.tip({"msg":"商品数量填写错误，无法结算","type":"danger"});
+        return false;
+      }
+
+      $.ajax({ //收藏ajax
+        type: "POST",
+        url: "/wap/items/<%= @item.id %>/check_qty",
+        data: {qty: $('.ctrol_l').val()},
+        dataType: "json",
+        success: function(res){
+          if(res.code){
+            data= {"list":[],"countnum":0,"countprice":0}; // 预定义购物车数据
+            var obj = {};
+
+            // 重组商品数据
+            obj.index = 0;
+            obj.hid = parseInt(1);
+            obj.pid = parseInt(0);
+            obj.tid = parseInt(<%= @item.id %>);
+            obj.price = parseFloat(<%= @item.price %>);
+            obj.num = parseInt($('.ctrol_l').val());
+            obj.name = "<%= @product.name %>";
+            obj.pimg = "<%= @product.ec_pictures.first.try(:pic_url) %>";
+            obj.pnor = "<%= @item.name %>";
+            obj.selected = 1;
+            obj.zeng = 0;
+            obj.zengtext = null;
+
+            data.countnum += obj.selected?obj.num:0;
+            data.countprice += (obj.selected&&!obj.zeng)?obj.num*obj.price:0;
+            data.list.push(obj);
+            console.log(data.list);
+            gostatement(data.list);
+          } else {
+            CUES.tip({"msg":"库存不足","type":"danger"});
+            return false;
+          }
+        }
+      });
+    });
+
+    function gostatement(list){
+      var obj = {};
+      obj.list = list;
+      obj.submit_type = 'single';
+      obj.countnum = data.countnum;
+      obj.countprice = data.countprice;
+      localStorage.statement = JSON.stringify(obj); // 存储本地 localStorage
+      window.location.href = "/wap/orders/new"; // 跳转页面
+    }
+
+    calc_freight();
+
+    function calc_freight() {
+      isajax = true;
+
+      ship_data = {};
+      ship_data.p_num = parseInt($('.ctrol_l').val());
+      ship_data.p_province_id = $('#J_sheng').val();
+      ship_data.p_city_id = $('#J_shi').val();
+
+      // ajax请求运费
+      $.ajax({ 
+          type: "GET",
+          url: "/wap/items/<%= @item.id %>/calc_freight",
+          data: {ship_data},
+          dataType: "json",
+          success: function(res){
+              isajax = false;
+              if(res.code){
+                  $('#J_freight').html(parseFloat(res.value).toFixed(2));
+                  $('#J_total').html((parseFloat(data.countprice) + parseFloat(res.value)).toFixed(2));
+              }
+          }
+      });
+    }
+  });
+</script>

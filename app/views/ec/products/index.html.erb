@@ -1,0 +1,278 @@
+  <% content_for :main_content do %>
+  <div class="main-content ">
+    <div class="breadcrumbs" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <%= render 'partials/home' %>
+        <li><%= link_to '商城管理', 'javascript:;' %></li>
+        <li><%= link_to '商品管理', ec_products_path %></li>
+      </ul>
+      <%#= render '/layouts/qrcode' %>
+    </div>
+
+    <div class="page-content">
+      <div class="tabbable">
+        <%= render "ec/product_categories/top_categories" %>
+
+        <div class="row margin-top-20">
+          <%= form_for @search, :html => { :method => :get } do |f| %>
+            <div class="col-sm-12">
+              <div class="col-md-2 row">
+                <div class="input-group input-group-text">
+                  <%= f.text_field :name_like, placeholder: '商品名称', class: 'col-xs-12' %>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <%= f.select :ec_category_id_eq, @current_user.ec_categories.product_category.pluck(:name, :id), {include_blank: '分类'}, class: 'col-xs-12' %>
+              </div>
+
+              <div class="col-md-2">
+                <%= f.select :status_eq, EcProduct.status_options[0...-1], {include_blank: '状态'}, class: 'col-xs-12' %>
+              </div>
+
+              <div class="col-md-2">
+                <%= f.select :is_recommend_eq, EcProduct.is_recommend_options, {include_blank: '推荐'}, class: 'col-xs-12' %>
+              </div>
+<!--
+              <div class="col-md-3 row">
+                <div class="input-group input-group-text">
+                  <span class="input-group-addon">省市：</span>
+                  <%#= f.select :province_id_eq, Province.pluck(:name, :id), {include_blank: '请选择省份'}, class: 'col-xs-6' %>
+                  <%#= f.select :city_id_eq, {}, {include_blank: '请选择城市'}, class: 'col-xs-6' %>
+                </div>
+              </div>
+ -->
+              <div class="col-md-2">
+                <button class="btn btn-primary btn-sm btn-filter">查询</button>
+              </div>
+            </div>
+          <% end %>
+
+          <%#= form_tag('', id: 'sss',method: :post) do %>
+            <div class="col-md-12 margin-top-20">
+              <div class="col-md-7 row">
+                <div class="col-md-2 row">
+                  <%= link_to '新增', new_ec_product_path, class: 'btn btn-sm btn-primary btn-filter pull-left' %>
+                </div>
+
+                <div class="col-md-2 row">
+                  <%#= button_to '入库', stock_ec_products_path, class: 'btn btn-primary btn-sm', method: :get, id: :stock_btn %>
+                  <a href="javascript:;" class="btn btn-primary btn-sm" data-target="Stock" data-toggle="modals" data-title="商品入库" data-height="500" data-iframe=" <%= stock_ec_products_path %>" id='stock_btn'>入库</a>
+                </div>
+
+                <div class="col-md-2 row">
+                  <%= button_to '上架', onshelf_all_ec_products_path, class: 'btn btn-primary btn-sm', method: :get, id: :onshelf_all_btn, confirm: '将同时上架选中商品的所有规格，确定要操作吗？' %>
+                </div>
+                <div class="col-md-2 row">
+                  <%= button_to '下架', offshelf_all_ec_products_path, class: 'btn btn-primary btn-sm', method: :get, id: :offshelf_all_btn, confirm: '将同时下架选中商品的所有规格，确定要操作吗？' %>
+                </div>
+
+                <div class="col-md-2 row">
+                  <%= button_to '推荐到首页', recommend_all_ec_products_path, class: 'btn btn-primary btn-sm', method: :get, id: :recommend_all_btn, confirm: '将推荐选中商品到小程序首页，确定要操作吗？' %>
+                </div>
+                <div class="col-md-2 row" style="margin-left: 20px; margin-right: 10px;">
+                  <%= button_to '取消推荐', not_recommend_all_ec_products_path, class: 'btn btn-primary btn-sm', method: :get, id: :not_recommend_all_btn, confirm: '将取消推荐选中商品到商城首页，确定要操作吗？' %>
+                </div>
+                <div class="col-md-2 row">
+                  <%= button_to '删除', delete_all_ec_products_path, class: 'btn btn-primary btn-sm', method: :get, id: :delete_all_btn, confirm: '将同时删除选中的商品，确定要操作吗？' %>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12 margin-top-10">
+              <table id="goodsTable" class="table table-striped table-bordered table-hover dataTable ">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="all" class='checkbox toggle' style="display:inline;"/></th>
+                    <th>分类</th>
+                    <th width="210">名称</th>
+                    <th>价格(元)</th>
+                    <th>规格数</th>
+                    <th>库存</th>
+                    <th>已售</th>
+                    <th>状态</th>
+                    <th><%= sort_link @search, :is_recommend, '推荐' %></th>
+                    <th><%= sort_link @search, :position, '排序' %></th>
+                    <th><%= sort_link @search, :created_at, '创建时间' %></th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="colleges_body">
+                  <% @products.each do |product| %>
+                    <tr data-id="<%= product.id %>">
+                      <td><input type="checkbox" class='checkbox' name="ec_product_ids[]" value="<%= product.id %>" style="display:inline;"/></td>
+                      <td><%= product.ec_category.name %></td>
+                      <td><%= product.name %></td>
+                      <td><%= [f(product.ec_items.show.minimum(:price)), f(product.ec_items.show.maximum(:price))].uniq.join(' ~ ') %></td>
+                      <td><%= product.ec_items.show.count %></td>
+                      <td><%= product.ec_items.show.sum(:qty) %></td>
+                      <td><%= product.ec_items.show.sum(:sold_qty) %></td>
+                      <td><%= product.status_name %></td>
+                      <td><%= product.is_recommend_name %></td>
+                      <td><input type="text" class="position" value="<%= product.position %>" size="5"></td>
+                      <td><%= product.created_at %></td>
+                      <td class="txt-left-align">
+                        <%= link_to '编辑', edit_ec_product_path(product) %>
+                        <%= link_to '规格管理', items_ec_product_path(product) %>
+                        <%#= link_to '上架', onshelf_ec_product_path(product), data: {method: :post,  confirm: '将同时上架选中商品的所有规格，确定要操作吗？'} %>
+                        <%#= link_to '删除', ec_product_path(product), data: {method: :delete, confirm: '确定要删除吗？'} %>
+                        <%= link_to '复制链接', 'javascript:;', onclick: "copylink(this);", data: { link: "/pages/ec/goods-detail/goods-detail?id=#{product.ec_item.id}&name=#{product.name}" } if product.ec_item %>
+                      </td>
+                    </tr>
+                  <% end %>
+                  <% if @products.blank? %>
+                    <tr><td colspan="12">无记录</td></tr>
+                  <% end %>
+                </tbody>
+              </table>
+              <%= paginate @products %>
+            </div>
+          <%# end %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+<% end %>
+
+<% content_for :custom_js do %>
+
+<script type="text/javascript">
+  $("#onshelf_all_btn").on("click", function(e){
+    // e.preventDefault();
+    // $('#sss').attr('action', "/ec/products/onshelf_all").submit();
+    if( $('#colleges_body input:checkbox:checked').length == 0 ) {
+      alert('请先选择商品');
+      return false;
+    }
+
+    var url_base = '<%= onshelf_all_ec_products_path %>?';
+    var suffix = [].join.call($('#colleges_body input:checkbox:checked').map(function(index, el) {
+      return "ids[]=" + $(el).val();
+    }), "&");
+    $('#onshelf_all_btn').attr('href', url_base + suffix);
+  });
+
+  $("#stock_btn").on("click",function(e){
+    if( $('#colleges_body input:checkbox:checked').length == 0 ) {
+      alert('请先选择商品');
+      return false;
+    }
+
+    var url_base = '<%= stock_ec_products_path %>?';
+    var suffix = [].join.call($('#colleges_body input:checkbox:checked').map(function(index, el) {
+      return "ids[]=" + $(el).val();
+    }), "&");
+    $('#stock_btn').attr('data-iframe', url_base + suffix);
+  });
+
+  $("#offshelf_all_btn").on("click",function(e){
+    if( $('#colleges_body input:checkbox:checked').length == 0 ) {
+      alert('请先选择商品');
+      return false;
+    }
+
+    var url_base = '<%= offshelf_all_ec_products_path %>?';
+    var suffix = [].join.call($('#colleges_body input:checkbox:checked').map(function(index, el) {
+      return "ids[]=" + $(el).val();
+    }), "&");
+    $('#offshelf_all_btn').attr('href', url_base + suffix);
+  });
+
+  $("#recommend_all_btn").on("click",function(e){
+    if( $('#colleges_body input:checkbox:checked').length == 0 ) {
+      alert('请先选择商品');
+      return false;
+    }
+
+    var url_base = '<%= recommend_all_ec_products_path %>?';
+    var suffix = [].join.call($('#colleges_body input:checkbox:checked').map(function(index, el) {
+      return "ids[]=" + $(el).val();
+    }), "&");
+    $('#recommend_all_btn').attr('href', url_base + suffix);
+  });
+
+  $("#not_recommend_all_btn").on("click",function(e){
+    if( $('#colleges_body input:checkbox:checked').length == 0 ) {
+      alert('请先选择商品');
+      return false;
+    }
+
+    var url_base = '<%= not_recommend_all_ec_products_path %>?';
+    var suffix = [].join.call($('#colleges_body input:checkbox:checked').map(function(index, el) {
+      return "ids[]=" + $(el).val();
+    }), "&");
+    $('#not_recommend_all_btn').attr('href', url_base + suffix);
+  });
+
+  $("#delete_all_btn").on("click",function(e){
+    if( $('#colleges_body input:checkbox:checked').length == 0 ) {
+      alert('请先选择商品');
+      return false;
+    }
+
+    var url_base = '<%= delete_all_ec_products_path %>?';
+    var suffix = [].join.call($('#colleges_body input:checkbox:checked').map(function(index, el) {
+      return "ids[]=" + $(el).val();
+    }), "&");
+    $('#delete_all_btn').attr('href', url_base + suffix);
+  })
+
+  $(document).ready(function () {
+    function refreshCityOptions(province_id) {
+      $.ajax({
+        url: "/cities",
+        data: {"province_id": province_id},
+        dataType: 'json',
+        success: function (result) {
+          var options = $("#search_city_id_eq");
+          options.empty(); // remove old options
+
+          options.append($("<option></option>").attr("value", '').text('请选择城市'));
+
+          $.each(result, function (index, option) {
+            options.append($("<option></option>")
+                .attr("value", option.id).text(option.name));
+          });
+        }
+      });
+    }
+
+    $("#search_province_id_eq").on('change', function (e) {
+      var province_id = $(this).val();
+
+      refreshCityOptions(province_id);
+    });
+  });
+
+  $(function(){
+    $("#all").click(function(){
+      $("input[name = 'ec_product_ids[]']").each(function (i, checkbox) {
+        checkbox.checked = true;
+      });
+      $("input[name = 'ec_product_ids[]']").attr("checked",this.checked);
+      var $subBox = $("input[name = 'ec_product_ids[]']");
+      $subBox.click(function(){
+         $("#all").attr("checked",$subBox.length == $("[name = 'ec_product_ids[]']:checked").length ? true : false);
+     });
+    });
+
+  });
+
+  function copylink(e) {
+    console.log($(e).data('link'));
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val($(e).data('link')).select();
+    document.execCommand("copy");
+    $temp.remove();
+    showTip("success","链接复制成功");
+  }
+
+  $('input.position').blur(function(){
+    var id = $(this).closest('tr').attr('data-id');
+    $.post("/ec/products/"+id+"/update_sort?position=" + $(this).val());
+  });
+</script>
+
+<% end %>

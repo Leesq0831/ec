@@ -1,0 +1,84 @@
+<% title "直送餐厅" %>
+
+<div class="html hotel">
+  <div class="htlist">
+    <% @shops_arr.each do |shop| %>
+      <div class="htitem">
+        <a href="<%= wap_shop_path(shop[0]) %>" class="ht_til"><%= shop[0].name %></a>
+        <a href="<%= wap_shop_path(shop[0]) %>" class="ht_ban">
+          <img src="<%= shop[0].format_logo_url %>" class="ht_img">
+          <p class="ht_juli">&lt;<%= shop[1] %>km</p>
+        </a>
+<!-- 
+        <div class="ht_list">
+          <table>
+            <tr>
+              <%# shop.ec_products.each do |ec_product| %>
+                <td>
+                  <a href="<%#= wap_item_path(ec_product.ec_item, shop_id: shop.id) %>" class="ht_ls">
+                    <p class="ht_lslink"><img src="<%#= ec_product.ec_picture.try(:pic_url) %>" class="ht_lsimg"><span class="ht_price">￥<%#= f ec_product.ec_item.price %></span></p>
+                    <p class="ht_lsname"><%#= ec_product.name %></p>
+                  </a>
+                </td>
+              <%# end %>
+            </tr>
+          </table>
+        </div>
+ -->
+        <a href="<%= baidu_map_address_http(shop[0].location_y, shop[0].location_x, shop[0].address_display) %>" class="ht_map"><%= shop[0].address_display %></a>
+
+        <p class="ht_hits">
+          <% shop[0].ec_tags.each do |shop_tag| %>
+            <a href="javascript:;" class="ht_hit"><%= shop_tag.name %></a>
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script type="text/javascript">
+  wx.config({
+    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: "<%= @appid %>", // 必填，公众号的唯一标识
+    timestamp: "<%= @timestamp %>", // 必填，生成签名的时间戳
+    nonceStr: "<%= @noncestr %>", // 必填，生成签名的随机串
+    signature: "<%= @signature %>",// 必填，签名，见附录1
+    jsApiList: ['checkJsApi', 'getLocation'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+  });
+
+  wx.ready(function(){
+    wx.checkJsApi({
+      jsApiList: ['chooseImage'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+      success: function(res) {
+      }
+    });
+
+    wx.getLocation({
+      type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+      success: function (res) {
+        var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+        var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+        var speed = res.speed; // 速度，以米/每秒计
+        var accuracy = res.accuracy; // 位置精度
+
+        console.log(res);
+
+        $.ajax({
+          type: "POST",
+          url: "/wap/users/report_location",
+          data: {latitude: latitude, longitude: longitude},
+          dataType: "json",
+          success: function(res){
+          },
+          fail: function(res){
+            CUES.tip({"msg":"无法获取地理位置","type":"danger"});
+          }
+        });
+      }
+    });
+  });
+
+  wx.error(function(res){
+  });
+</script>

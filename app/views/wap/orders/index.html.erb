@@ -1,0 +1,264 @@
+<% title "我的订单" %>
+<div class="html orders">
+    <div class="tabnav tabnav_fixed">
+        <!-- 高亮状态对应部分后期需配合修改 -->
+        <a href="javascript:;" data-type="all" class="J_tab tab" id="J_type_all">全部订单</a>
+        <a href="javascript:;" data-type="pending" class="J_tab tab" id="J_type_pay">待付款<%= "(#{@user.ec_orders.pending.count})" if @user.ec_orders.pending.count > 0 %></a>
+        <a href="javascript:;" data-type="delivered" class="J_tab tab" id="J_type_take">待收货<%= "(#{@user.ec_orders.shipping.count})" if @user.ec_orders.shipping.count > 0 %></a>
+        <a href="javascript:;" data-type="confirmed" class="J_tab tab" id="J_type_rated">待评价<%= "(#{@user.ec_orders.confirmed.count})" if @user.ec_orders.confirmed.count > 0 %></a>
+    </div>
+
+    <% if @orders.present? %>
+        <div class="list" id="J_list">
+        </div>
+        <a href="javascript:;" id="J_more" class="more">点击加载更多</a>
+    <% else %>
+        <!-- 订单为空的时候使用以下代码 start -->
+        <div class="empty">
+            <img src="/wap/assets/images/adr_em.png" class="eimg">
+            <p class="etext">暂无相关订单</p>
+        </div>
+        <!-- end -->
+    <% end %>
+</div>
+
+<!-- <a href="<%= wap_users_path %>" class="homebtn homebtn_bot">个人<br>中心</a> -->
+
+<script type="text/javascript">
+    // 列表页用ajax实现
+    $(function(){
+        var J_tab = $('.J_tab'),
+            J_more = $('#J_more'),
+            J_list = $('#J_list'),
+            sc = getRequest();
+
+        if(sc.type){
+            $("#J_type_"+sc.type).addClass('tab_active');
+        };
+
+        var ajaxdata = {"page":1,"pagesize":7,"type":sc.type}, // 获取订单列表用的数据
+            isajax = false, //设置开关 防止重复提交
+            isdone = false; // 是否加载完成
+
+        // 获取订单列表
+        function getajax(ajaxdata){
+            isajax = true;
+            J_more.html('正在加载···');
+            $.ajax({
+                type: "GET",
+                url: "/wap/orders?type="+ajaxdata.type,
+                data: {ajaxdata},
+                dataType: "json",
+                success: function(res){
+                    if(res.code){
+                        var dt = res.data,len = dt.length,str = '';
+                        for(var i=0;i<len;i++){
+                            var v = dt[i],
+                                obj_state = backstate(v.state,v.ordernumber,v.order_id,v.logistic_no,v.self_pickup), //状态值，订单号，具体情况配置
+                                obj_list = backplist(v.list); // 解析具体产品
+                            str += '<div class="item">\
+                                <div class="i_til"><a href="/wap/orders/'+v.order_id+'"><p class="ellipsis">'+v.shopname+'</p><span class="i_sta">'+obj_state.state+'</span></a></div>\
+                                <div class="plist">'+obj_list.list+'</div>\
+                                <div class="pinfo">共'+obj_list.count+'件&ensp;&ensp;&ensp;实付款：<span class="i_pric">￥'+parseFloat(obj_list.price).toFixed(2)+'</span></div>'+obj_state.botpart+'\
+                            </div>';
+                        };
+                        J_list.append(str);
+                    };
+
+                    setTimeout(function(){
+                        isajax = false;
+                        if(!dt || (ajaxdata.pagesize * ajaxdata.page) >= res.total){
+                            isdone = true;
+                            J_more.html('已加载全部数据');
+                        }else{
+                            J_more.html('点击加载更多')
+                        };
+                    },100)
+                }
+            });
+        };
+
+        setTimeout(function(){
+            // alert('start first ajax')
+            getajax(ajaxdata); // 获取首次订单数据
+        }, 100);
+
+        // 返回状态 后期根据具体字段适配
+        function backstate(state, number, orderid, logistic_no, self_pickup){
+
+            var obj = {};
+            switch(state){
+                case 0:
+                    obj.state = "待付款";
+                    obj.botpart = '<div class="i_bot"><a href="javascript:;" data-onumber="'+number+'" data-orderid="'+orderid+'" class="J_order_cancal i_btn">取消订单</a><a href="/pay/wxpay/pay?out_trade_no='+number+'" class="i_btn i_btn_red">去支付</a></div>';
+                    break;
+                case 1:
+                    obj.state = "待发货";
+                    // obj.botpart = '<div class="i_bot"><a href="javascript:;" data-onumber="'+number+'" data-orderid="'+orderid+'" class="J_order_cancal i_btn">取消订单</a></div>';
+                    obj.botpart = '';
+                    break;
+                case 2:
+                    obj.state = "已发货";
+                    obj.botpart = '<div class="i_bot"><a href="https://m.kuaidi100.com/result.jsp?nu='+logistic_no+'" data-logistic_no="'+logistic_no+'" class="i_btn">查看物流</a></div>';
+                    break;
+                case 3:
+                    obj.state = "已送达";
+                    if ( self_pickup == true ) {
+                      logistic_link = '';
+                    } else {
+                      logistic_link = '<a href="https://m.kuaidi100.com/result.jsp?nu='+logistic_no+'" data-logistic_no="'+logistic_no+'" class="i_btn">查看物流</a>';
+                    }
+
+                    obj.botpart = '<div class="i_bot">'+logistic_link+'<a href="javascript:;" data-onumber="'+number+'" data-orderid="'+orderid+'" class="J_order_sure i_btn i_btn_red_o">确认收货</a></div>';
+                    break;
+                case 4:
+                    obj.state = "已收货";
+                    obj.botpart = '<div class="i_bot"><a href="/wap/comments/new?order_id='+orderid+'" data-orderid="'+orderid+'" class="i_btn">去评价</a></div>';
+                    break;
+                case 5:
+                    obj.state = "已完成";
+                    obj.botpart = '';
+                    break;
+                case -1:
+                    obj.state = "已取消";
+                    obj.botpart = '<div class="i_bot"><a href="javascript:;" data-onumber="'+number+'" data-orderid="'+orderid+'" class="J_order_delete i_btn">删除订单</a></div>';
+                    break;
+                // case -2:
+                //     obj.state = "申请退款中";
+                //     obj.botpart = '<div class="i_bot"><a href="refund.html?ordernumber='+number+'" data-orderid="'+orderid+'" class="i_btn">退款详情</a></div>';
+                //     break;
+                // case -3:
+                //     obj.state = "已退款";
+                //     obj.botpart = '<div class="i_bot"><a href="refund.html?ordernumber='+number+'" data-orderid="'+orderid+'" class="i_btn">退款详情</a></div>';
+                //     break;
+                // case -4:
+                //     obj.state = "逾期未支付";
+                //     obj.botpart = '<div class="i_bot"><a href="refund.html?ordernumber='+number+'" data-orderid="'+orderid+'" class="i_btn">退款详情</a></div>';
+                //     break;
+                // case -5:
+                //     obj.state = "不可退款/退货";
+                //     obj.botpart = '<div class="i_bot"><a href="refund.html?ordernumber='+number+'" data-orderid="'+orderid+'" class="i_btn">退款详情</a></div>';
+                //     break;
+                case -6:
+                    obj.state = "已删除";
+                    obj.botpart = '';
+                    break;
+            }
+             return obj;
+        };
+
+        // 返回产品列表及附属信息 组合对象
+        function backplist(list){
+            var obj = {},str = '',len = list.length,count = 0,price = 0;
+            for(var i=0;i<len;i++){
+                var v = list[i];
+                count += v.qty; // 累加数量
+                price += v.qty*v.price; // 累加金额
+                pic_url = "http://heba.zhishangtech.top/"+v.pic_key+"?imageMogr2/auto-orient/thumbnail/!210x"
+
+                str += '<a href="/wap/orders/'+v.ec_order_id+'"><div class="i_proc">\
+                    <img src="'+pic_url+'" class="i_pimg">\
+                    <p class="i_pname">'+v.product_name+'</p>';
+                str += v.item_name?'<p class="i_pnor">规格：'+v.item_name+'</p>':''; // 规格dom判断
+                str += '<p class="i_prica"><span class="i_pricb">￥</span>'+parseFloat(v.price).toFixed(2)+'<span class="i_pnum">x'+v.qty+'</span></p></div></a>';
+            }
+
+            return {"list":str,"count":count,"price":parseFloat(price).toFixed(2)};
+        };
+
+        J_tab.click(function(){ // tab切换
+            var self = $(this),type = self.attr('data-type');
+            if(type!=ajaxdata.type){
+                ajaxdata.type = type;
+                window.history.replaceState("","","orders?type="+type);
+                self.addClass('tab_active').siblings().removeClass('tab_active');
+                J_list.html('');
+                ajaxdata.page = 1;
+                isdone = false;
+                getajax(ajaxdata);
+            }
+        });
+
+        J_more.click(function(){
+            if(isajax || isdone){return false;}
+            ajaxdata.page++;
+            getajax(ajaxdata);
+        });
+
+        J_list.on('click','.J_order_cancal',function(){ // 取消订单
+            var self = $(this),
+                par = self.parent(),
+                item = par.parent(),
+                sta = item.find('.i_sta'),
+                pric = item.find('.i_pric'),
+                ordernumber = self.attr('data-onumber');
+                orderid = self.attr('data-orderid');
+            CUES.confirm({"msg":"确认要取消该订单吗？","callback":function(){
+                isajax = true;
+                // ajax取消订单
+                $.ajax({
+                    type: "POST",
+                    url: "/wap/orders/"+orderid + "/cancel",
+                    data: {},
+                    dataType: "json",
+                    success: function(res){
+                        isajax = false;
+                        if(res.code){
+                            CUES.tip({"msg":"取消成功","type":"success"});
+                            par.hide();
+                            sta.html('已取消');
+                            pric.html('￥0');
+                        }
+                    }
+                });
+            }})
+        }).on('click','.J_order_sure',function(){ // 确认收货
+            var self = $(this),
+                par = self.parent(),
+                item = par.parent(),
+                sta = item.find('.i_sta'),
+                logistic_no = self.attr('data-logistic_no');
+                orderid = self.attr('data-orderid');
+            CUES.confirm({"msg":"确认收到货物？","callback":function(){
+                isajax = true;
+                // ajax确认收货
+                $.ajax({
+                    type: "POST",
+                    url: "/wap/orders/"+orderid+"/confirm",
+                    data: {},
+                    dataType: "json",
+                    success: function(res){
+                        isajax = false;
+                        if(res.code){
+                            CUES.tip({"msg":"确认成功","type":"success"});
+                            par.html('<a href="https://m.kuaidi100.com/result.jsp?nu='+logistic_no+'" class="i_btn">查看物流</a><a href="/wap/comments/new?order_id='+orderid+'" data-orderid="'+orderid+'" class="i_btn">去评价</a>');
+                            sta.html('已完成');
+                        }
+                    }
+                });
+            }})
+        }).on('click','.J_order_delete',function(){ // 删除订单
+            var self = $(this),
+                item = self.parent().parent(),
+                ordernumber = self.attr('data-onumber');
+                orderid = self.attr('data-orderid');
+            CUES.confirm({"msg":"确认要删除该订单吗？","callback":function(){
+                isajax = true;
+                // ajax删除订单
+                $.ajax({
+                    type: "DELETE",
+                    url: "/wap/orders/"+orderid,
+                    data: {},
+                    dataType: "json",
+                    success: function(res){
+                        isajax = false;
+                        if(res.code){
+                            CUES.tip({"msg":"删除成功","type":"success"});
+                            item.slideUp();
+                        }
+                    }
+                });
+            }})
+        })
+    });
+</script>

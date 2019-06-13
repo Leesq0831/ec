@@ -1,0 +1,115 @@
+common: &common
+  hostname:       "wx.91heba.com"
+  mhostname:      "wx.91heba.com"
+  www_host:       "http://wx.91heba.com"
+  m_host:         "http://wx.91heba.com"
+  wshop_host:     "http://ec.91heba.com"
+  wmall_host:     "http://wmall.91heba.com"
+  wlife_host:     "http://wlife.91heba.com"
+  shequ_host:     "http://shequ.91heba.com"
+  hotel_host:     "http://hotel.91heba.com"
+  recommend_host: "http://recommend.91heba.com"
+  oa_host:        "http://oa.91heba.com"
+  faye_host:      "http://localhost:9393"
+  app_host: "http://api.91heba.com"
+  pay_host: "http://pay.91heba.com"
+  wxapi_host: "http://api.wx.91heba.com"
+  cas_url: "http://127.0.0.1:8001"
+  sms_service: 'zhilian'
+  zhilian_url: 'http://61.145.229.29:9003/MWGate/wmgw.asmx'
+  zhilian_user_id: 'J02110'
+  zhilian_password: '696896'
+  uploads_dir: <%= "#{Rails.root}/public/uploads" %>
+  yeepay:
+    yeepay_host: "http://ok.yeepay.com/"
+    callbackurl: "http://ui.wx.91heba.com/yeepay/callback"
+    fcallbackurl: 'http://ui.wx.91heba.com/yeepay/callback'
+  wx_plugin:
+    token: 44cb682582f069877356daee2de39a0a
+    base64_aes_key: winc44b9f22bcef72d2ea76b621b6f2c095160e81e6
+    encoding_aes_key: winc44b9f22bcef72d2ea76b621b6f2c095160e81e6
+    component_app_id: wx76b32f516a607539
+    component_app_secret: 6595b1727a7e4c1921a5f7c68919083b
+  baidu_ak: '3B6v2KKjX3mtbxKB8DD95X5Zo1K0apHl'
+  express:
+    - 顺风快递
+    - 圆通快递
+    - 申通快递
+    - 中通快递
+    - 韵达快递
+    - 汇通快运
+    - 天天快递
+    - EMS快递
+    - 宅急送
+    - 邮政国内包裹
+    - 邮政国际包裹
+    - EMS国际快递
+    - 优速快递
+    - 全峰快递
+    - 德邦物流
+
+production:
+  <<: *common
+  hostname: "wx.91heba.com"
+  mhostname: "wx.91heba.com"
+  www_host:       "http://wx.91heba.com"
+  m_host:         "https://mp.dingyutech.com"
+  wshop_host:     "http://ec.91heba.com"
+  wmall_host:     "http://mall.91heba.com"
+  wlife_host:     "http://life.91heba.com"
+  shequ_host:     "http://shequ.91heba.com"
+  hotel_host:     "http://hotel.91heba.com"
+  oa_host:        "http://oa.91heba.com"
+  recommend_host: "http://lifeboat.91heba.com"
+  faye_host:      "http://api.91heba.com:9393"
+  app_host:       "http://api.91heba.com"
+  pay_host:       "https://mp.dingyutech.com"
+  wxapi_host:     "http://api.wx.91heba.com"
+  cas_url:        "http://cas.91heba.com"
+  uploads_dir:    "/opt/apps/shared/winwemedia/uploads"
+  yeepay:
+    yeepay_host:  "https://ok.yeepay.com/"
+    callbackurl:  "http://wx.91heba.com/yeepay/callback"
+    fcallbackurl: 'http://wx.91heba.com/yeepay/callback'
+  wx_plugin:
+    token: 44cb682582f069877356daee2de39a0a
+    base64_aes_key: winc44b9f22bcef72d2ea76b621b6f2c095160e81e6
+    encoding_aes_key: winc44b9f22bcef72d2ea76b621b6f2c095160e81e6
+    component_app_id: wx76b32f516a607539
+    component_app_secret: 6595b1727a7e4c1921a5f7c68919083b
+
+staging:
+  <<: *common
+  hostname: "heba.dajiaxiao.cn"
+  mhostname: "heba.dajiaxiao.cn"
+  www_host:       "http://heba.dajiaxiao.cn"
+  m_host:         "https://mp.biaotuyun.com"
+  wshop_host:     "http://staging.ec.91heba.com"
+  wmall_host:     "http://staging.mall.91heba.com"
+  wlife_host:     "http://wlife.91heba.com"
+  shequ_host:     "http://staging.shequ.91heba.com"
+  hotel_host:     "http://staging.91heba.com"
+  oa_host:        "http://staging.91heba.com"
+  recommend_host: "http://staging.91heba.com"
+  app_host: "http://staging.91heba.com"
+  pay_host:       "https://mp.biaotuyun.com"
+  yeepay:
+    yeepay_host: "https://ok.yeepay.com/"
+    callbackurl: "http://stagingwx.91heba.com/yeepay/callback"
+    fcallbackurl: 'http://stagingwx.91heba.com/yeepay/callback'
+
+development:
+  <<: *common
+  hostname: "winwemedia.dev:3000"
+  mhostname: "m.winwemedia.dev:3000"
+  wwww_host:      "http://127.0.0.1:3000"
+  m_host:         "http://127.0.0.1:3000"
+  wlife_host:     "http://127.0.0.1:3001"
+  wmall_host:     "http://127.0.0.1:3002"
+  wshop_host:     "http://127.0.0.1:3003"
+  shequ_host:     "http://127.0.0.1:3004"
+  recommend_host: "http://127.0.0.1:3005"
+  app_host:       "http://127.0.0.1:3006"
+
+test:
+  <<: *common

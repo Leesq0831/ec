@@ -1,0 +1,238 @@
+<% provide(:title, @wx_mp_user.try(:nickname)) %>
+
+<%= form_for @shop_order, url: success_mobile_shop_order_url(site_id: session[:site_id], anchor: "mp.weixin.qq.com"), method: :post, :html => {class: "mod-form form-hor"} do |f| %>
+
+  <div class="stage" id="stage">
+    <header>
+      <a href="javascript:history.go(-1);" class="fa fa-angle-left fl"></a>
+      <h1>
+        订单详情
+      </h1>
+      <% if @shop_order.book_dinner? %>
+      <a href="tel:<%= @shop_order.shop_branch.book_dinner_rule.book_phone %>" class="fa fa-phone fr"></a>
+      <% else %>
+      <a href="tel:<%= @shop_order.shop_branch.take_out_rule.book_phone %>" class="fa fa-phone fr"></a>
+      <% end %>
+    </header>
+
+    <section id="sec-index">
+      <div class="body">
+        <div class="order">
+          <div class="mod-order">
+            <div class="mod-form form-hor">
+              <div class="bd">
+                <div class="form-li">
+                  <div class="li-l"><b>订单编号：</b></div>
+                  <div class="li-r"><span class="text-red"><%= @shop_order.order_no %></span></div>
+                </div>
+                <div class="form-li">
+                  <div class="li-l"><b>订单金额：</b></div>
+                  <div class="li-r"><span>￥<%= @shop_order.total_amount %></span></div>
+                </div>
+                <div class="form-li">
+                  <div class="li-l"><b>支付方式：</b></div>
+                  <div class="li-r"><span><%= @shop_order.pay_type_name %></span></div>
+                </div>
+                <div class="form-li">
+                  <div class="li-l"><b>支付状态：</b></div>
+                  <div class="li-r"><span><%= @shop_order.pay_status_name %></span></div>
+                </div>
+                <div class="form-li">
+                  <div class="li-l"><b>您的姓名：</b></div>
+                  <div class="li-r">
+                    <span><%= @shop_order.username %></span>
+                  </div>
+                </div>
+                <div class="form-li">
+                  <div class="li-l"><b>您的电话：</b></div>
+                  <div class="li-r"><%= @shop_order.mobile %></div>
+                </div>
+                <div class="form-li">
+                  <div class="li-l">
+                    <b><% if @shop_order.take_out? %>发货时间：<% else %>订餐时间：<% end %></b>
+                  </div>
+                  <div class="li-r"><span>
+                      <%= @shop_order.book_at %>
+                  </span></div>
+                </div>
+                <a class="form-li" href="http://api.map.baidu.com/marker?location=<%= @shop_order.shop_branch.location_y%>,<%= @shop_order.shop_branch.location_x%>&title=<%=@shop_order.shop_branch.address%>&content=<%= @shop_order.shop_branch.address%>&output=html">
+                  <div class="li-l"><b><% if @shop_order.take_out? %>发货地址：<% else %>预定门店：<% end %></b></div>
+                  <div class="li-r mod-fa fa fa-location-arrow">
+                    <% if @shop_order.take_out? %>
+                    <span><%= @shop_order.address %></span>
+                    <% else %>
+                    <span><%= @shop_order.shop_branch.name %> <%= @shop_order.shop_branch.ditu_address %></span>
+                    <% end %>
+                  </div>
+                </a>
+                <div class="form-li">
+                  <div class="li-l"><b>备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：</b></div>
+                  <div class="li-r"><span><%= @shop_order.description %></span></div>
+                </div>
+
+                <% if @shop_order.book_dinner? && @shop_order.in_queue? %>
+                <div class="form-li">
+                  <div class="li-l"><b>排号信息：</b></div>
+                  <div class="li-r"><span><%= @shop_order.queue_no %></span></div>
+                </div>
+                <% end %>
+                <% if @shop_order.book_dinner? && @shop_order.in_branch? %>
+                <div class="form-li">
+                  <div class="li-l"><b>座位信息：</b></div>
+                  <div class="li-r"><span><%= @shop_order.desk_no %></span></div>
+                </div>
+                <% end %>
+              </div>
+
+              <div class="bd">
+                <% if @shop_order.pending? && !@shop_order.cashpay? && @shop_order.unfinish? %>
+                  <% if @shop_order.take_out? %>
+
+                    <% take_out_rule =  @shop_order.shop_branch.take_out_rule %>
+                    <% @payment_types = [] unless take_out_rule.is_pay_online %>
+
+                    <% @payment_types.push(PaymentType.where(id: 10000).first) if take_out_rule.is_pay_cash %>
+                    <% @payment_types.push(PaymentType.where(id: 10005).first) if take_out_rule.is_pay_balance %>
+
+                    <div class="tit1">支付方式</div>
+                    <div class="bgf bord1 radiu3">
+                      <div class="zhifu_list">
+                        <ul>
+                          <% if @payment_types.present? %>
+                            <% @payment_types.each_with_index do |payment_type, index|%>
+                              <li class="<%= 'on' if (index.eql?(0) && f.object.pay_type == 0) || payment_type.id == f.object.pay_type %>">
+                               <span class="right check_icon"></span>
+                               <span class="left zf_pic <%= PaymentType::CSS_CLASS[payment_type.id] %>"></span>
+                               <span><%= payment_type.name %></span>
+                              </li>
+                              <%= f.radio_button :pay_type, payment_type.id, {checked: (index.eql?(0) && f.object.draft?) || payment_type.id == f.object.pay_type, style: 'display:none;'} %>
+                            <% end %>
+                          <% else %>
+                            <span>没有可用的支付方式</span>
+                          <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+
+                  <% if @shop_order.book_dinner? %>
+                    <% book_dinner_rule =  @shop_order.shop_branch.book_dinner_rule %>
+                    <% @payment_types = [] unless book_dinner_rule.is_pay_online %>
+
+                    <% @payment_types.push(PaymentType.where(id: 10000).first) if book_dinner_rule.is_pay_cash %>
+                    <% @payment_types.push(PaymentType.where(id: 10005).first) if book_dinner_rule.is_pay_balance %>
+
+                    <div class="tit1">支付方式</div>
+                    <div class="bgf bord1 radiu3">
+                      <div class="zhifu_list">
+                        <ul>
+                          <% if @payment_types.present? %>
+                            <% @payment_types.each_with_index do |payment_type, index|%>
+                              <li class="<%= 'on' if (index.eql?(0) && f.object.pay_type == 0) || payment_type.id == f.object.pay_type %>">
+                               <span class="right check_icon"></span>
+                               <span class="left zf_pic <%= PaymentType::CSS_CLASS[payment_type.id] %>"></span>
+                               <span><%= payment_type.name %></span>
+                              </li>
+                              <%= f.radio_button :pay_type, payment_type.id, {checked: (index.eql?(0) && f.object.draft?) || payment_type.id == f.object.pay_type, style: 'display:none;'} %>
+                            <% end %>
+                          <% else %>
+                            <span>没有可用的支付方式</span>
+                          <% end %>
+                        </ul>
+                      </div>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+
+              <div class="ft">
+                <div class="food-shopcar">
+                  <div class="hd">
+                    <div class="shopcar-btn active">
+                      <a class="fl" id="shopcar-btn">
+                        <span class="mod-fa fa fa-caret-up">共：<i><%= @shop_order.total_qty %></i></span>
+                      </a>
+                      <span class="fl">
+                        <b>￥<%= @shop_order.total_amount %></b>
+                      </span>
+                    </div>
+                    <div class="tcenter">
+                      <%= link_to cancel_mobile_shop_order_url(site_id: session[:site_id], id: @shop_order.id), method: :post, data: { confirm: '确定要取消订单？' }, class: "btn btn-blue" do %>
+                      取消订单
+                      <% end if @shop_order.pending? %>
+                      <% if @shop_order.pending? && !@shop_order.cashpay? && @shop_order.unfinish? %>
+                        <%= f.submit "立即支付",  class: "btn" %>
+                      <% else %>
+                        <%#= link_to "再次下单", clone_mobile_shop_order_url(site_id: session[:site_id], id: @shop_order.id), class: "btn" %>
+                      <% end %>
+                    </div>
+                  </div>
+                  <div class="bd" id="shopcar-list">
+                    <dl>
+                      <dt></dt>
+                      <dd class="abc">
+                        <div class="wrap-scroll" id="shop_order_item_div" >
+                          <!-- begin list -->
+                          <%= render :partial => 'shop_order_item', :collection => @shop_order.shop_order_items, :as => :shop_order_item %>
+                          <!-- end list -->
+                        </div>
+                        <% if @shop_order.take_out? %>
+                          <div class="like_a list-box" style="color: #999999;position: absolute; bottom: 0; margin-bottom: 20px;">
+                            <div class="list-cell" style="text-align: right">
+                              配送费：￥<%= @shop_order.book_rule.deliver_amount_f %>
+                            </div>
+                          </div>
+                        <% end %>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<% end %>
+
+<script>
+  $(function(){
+
+    $(".like_a").find(".middle-div").each(function(){
+      var a = $(this).find("input").val();
+      $(this).replaceWith('<span>'+ a +'份</span>');
+    })
+
+    $("#shopcar-btn, #shopcar-list dt").click(function(){
+            var height = $(window).height()-115;
+            $("#shopcar-list").slideToggle(function(){
+                var flag = $(this).css("display");
+                 if(flag == "block"){
+                    $(".html").css({"overflow":"hidden","height":"100%"});
+                    $(".abc").slimScroll({
+                        height: height
+                    });
+                }else{
+                    $(".html").removeAttr("style");
+                }
+            });
+
+            $("#shopcar-btn").addClass("active");
+        });
+    $("#btn-food-cancel").click(function(){
+      alertMessage("您确定要取消吗？",function(){
+                // window.location.href="food-my.html";
+              });
+    });
+  });
+
+  $(".zhifu_list ul li").click(function(){
+    $(this).addClass("on").siblings().removeClass("on");
+    $(this).next().prop('checked', true);
+  });
+
+
+</script>
+

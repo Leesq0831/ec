@@ -1,0 +1,17 @@
+环境安装：
+  bundle install
+  修改 config/database.yml，并将项目的数据库结构导入数据库中
+  将 config/local_env.yml.example 拷贝到 config/local_env.yml
+
+部署须知：
+  后台应用部署到服务器的 /opt/apps/winwemedia/current 目录；
+    部署命令： `cap production deploy`
+
+  其它环境的部署请参照 config/deploy.rb 文件；
+
+  注意： 如果部署到staging环境或生产环境， 并且 assets 文件有变动， 请先执行 cap {{stage}} precompile
+
+sidekiq部署：
+  应用程序部署到 “”， 以root运行 `/etc/init.d/sidekiq restart`
+
+注意事项：

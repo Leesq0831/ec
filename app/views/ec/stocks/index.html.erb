@@ -1,0 +1,70 @@
+<% content_for :main_content do %>
+  <div class="main-content ">
+    <div class="breadcrumbs" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <%= render 'partials/home' %>
+        <li><%= link_to '商城管理', 'javascript:;' %></li>
+        <li><%= link_to '库存管理', ec_stocks_path %></li>
+      </ul>
+      <%#= render '/layouts/qrcode' %>
+    </div>
+    <div class="page-content">
+      <div class="tabbable">
+        <%= render "ec/product_categories/top_categories" %>
+
+        <div class="row margin-top-20">
+          <%= form_for @search, url: ec_stocks_path, :html => { :method => :get } do |f| %>
+            <div class="col-sm-12">
+
+              <div class="col-md-4">
+                <div class="input-group input-group-text">
+                  <span class="input-group-addon">入库日期：</span>
+                  <div class="input-group input-group-sm col-xs-12 row">
+                    <span class="input-group-addon">
+                      <i class="icon-calendar bigger-110"></i>
+                    </span>
+                    <%= f.text_field :created_at_gte, value: @search.created_at_gte.try(:to_date), class: "datepicker input-sm form-control" %>
+                    <span class="input-group-addon"><i class="">-</i></span>
+                    <%= f.text_field :created_at_lte, value: @search.created_at_lte.try(:to_date), class: "datepicker input-sm form-control" %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <button class="btn btn-primary btn-sm btn-filter">查询</button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="col-md-12 margin-top-10">
+          <table id="goodsTable" class="table table-striped table-bordered table-hover dataTable ">
+            <thead>
+              <tr>
+                <th>商品名称</th>
+                <th>商品规格</th>
+                <th>入库数量</th>
+                <th>入库时间</th>
+              </tr>
+              </thead>
+              <tbody id="colleges_body">
+                <% @stocks.each do |stock| %>
+                  <tr>
+                    <td><%= stock.ec_item.ec_product.name %></td>
+                    <td><%= stock.ec_item.name %></td>
+                    <td><%= stock.qty %></td>
+                    <td><%= stock.created_at %></td>
+                  </tr>
+                <% end %>
+                <% if @stocks.blank? %>
+                  <tr><td colspan="6">无记录</td></tr>
+                <% end %>
+              </tbody>
+            </table>
+            <%= paginate @stocks %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

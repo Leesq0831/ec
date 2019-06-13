@@ -1,0 +1,62 @@
+<% provide(:title, '微信支付') %>
+
+  <script language="javascript">
+      // 当微信内置浏览器完成内部初始化后会触发WeixinJSBridgeReady事件。
+      var flag = true;
+      document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+          //公众号支付
+          jQuery('a#getBrandWCPayRequest').click(function(e){
+              if(flag){
+                  flag = false;
+                  WeixinJSBridge.invoke('getBrandWCPayRequest',{
+                      "appId" : "<%= @wxpay.app_id %>", //公众号名称，由商户传入
+                      "timeStamp" : "<%= @pay_sign_time_stamp %>", //时间戳
+                      "nonceStr" : "<%= @pay_sign_nonce_str %>", //随机串
+                      "package" : "prepay_id=<%= @payment.prepay_id %>",//扩展包
+                      "signType" : "<%= get_sign_type %>", //微信签名方式:1.md5
+                      "paySign" : "<%= @pay_sign %>" //微信签名
+                  },function(res){
+                      if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                          window.location.href="<%= pay_wxpay_success_url(out_trade_no: @payment.out_trade_no)%>";
+                      }else{
+                          window.location.href="<%= pay_wxpay_fail_url(out_trade_no: @payment.out_trade_no, openid: @payment.open_id)%>";
+                      }
+                  });
+              }
+          });
+          // WeixinJSBridge.log('yo~ ready.');
+      }, false)
+  </script>
+  <script type="text/javascript">
+      function onBridgeReady(){
+         WeixinJSBridge.call('hideOptionMenu');
+        }
+
+        if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+            }
+        }else{
+            onBridgeReady();
+     }
+  </script>
+
+<div class="page">
+  <div class="weui-msg">
+    <!-- <div class="weui-msg__icon-area"><i class="weui-icon-success weui-icon_msg"></i></div> -->
+    <div class="weui-msg__text-area">
+      <h2 class="weui-msg__title">￥<%= @payment.total_fee %>元</h2>
+      <p class="weui-msg__desc">订单编号：<%= @payment.out_trade_no %></p>
+    </div>
+    <div class="weui-msg__opr-area">
+      <p class="weui-btn-area">
+        <%= link_to '确认支付', 'javascript:void(0);', class: 'weui-btn weui-btn_primary', id: 'getBrandWCPayRequest' %>
+        <%= link_to '返回订单页面', wap_order_path(@payment.paymentable), class: 'weui-btn weui-btn_default' %>
+      </p>
+    </div>
+    <%#= render 'footer' %>
+  </div>
+</div>

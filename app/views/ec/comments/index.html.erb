@@ -1,0 +1,100 @@
+<style type="text/css">
+  .select-ec {
+    width: 150px;
+  }
+</style>
+<% content_for :main_content do %>
+  <div class="main-content ">
+    <div class="breadcrumbs" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <%= render 'partials/home' %>
+        <li><%= link_to '订单管理' %></li>
+        <li><%= link_to '评论列表', ec_comments_path %></li>
+      </ul>
+      <%#= render '/layouts/qrcode' %>
+    </div>
+
+    <div class="page-content">
+      <div class="tabbabled">
+        <%= render "ec/order_rules/top_tab" %>
+
+        <div class="row margin-top-20">
+          <div class=" col-md-12">
+            <%= form_for @search, url: ec_comments_path,  html: { method: :get } do |f| %>
+              <div class="col-md-2">
+                <div class="input-group input-group-sm input-group-text">
+                  <%= f.text_field :nickname_like, placeholder:"请输入评论用户昵称", class: 'col-xs-12' %>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="input-group input-group-sm input-group-text">
+                  <%= f.text_field :star_eq, placeholder:"请输入评星", class: 'col-xs-12' %>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+               <div class="input-group input-group-sm input-group-text">
+                <%= f.select :status_eq, EcComment.status_options, {include_blank:'状态'},class: 'col-xs-12 select-ec'%>
+               </div>
+              </div>
+
+              <div class="col-md-2">
+                <div class="input-group input-group-sm input-group-text">
+                  <%= f.submit '查询', class: 'btn btn-sm btn-filter btn-primary' %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class=" col-md-12 margin-top-10">
+          <table id="rolesTable" class="table table-striped table-bordered table-hover dataTable m">
+            <thead>
+              <tr>
+                <th>订单编号</th>
+                <th>商品名称</th>
+                <th>商品sku</th>
+                <th>商品规格</th>
+                <th>评论用户</th>
+                <th>评星</th>
+                <th>评论内容</th>
+                <th>回复内容</th>
+                <th>回复时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tboday>
+              <% @ec_comments.each do |ec_comment| %>
+                <tr>
+                  <td><%= ec_comment.ec_order_item.ec_order.order_no %></td>
+                  <td><%= ec_comment.ec_order_item.product_name %></td>
+                  <td><%= ec_comment.ec_order_item.ec_item.sku %></td>
+                  <td><%= ec_comment.ec_order_item.ec_item.try(:name) %></td>
+                  <td><%= ec_comment.user.try(:wx_user).try(:nickname) %></td>
+                  <td><%= ec_comment.star %></td>
+                  <td><%= ec_comment.content %></td>
+                  <td><%= ec_comment.reply %></td>
+                  <td><%= ec_comment.replied_at %></td>
+                  <td><%= ec_comment.status_name %></td>
+                  <td>
+                    <%#= link_to '查看', 'javascript:;', data: {toggle: 'modals', target: 'roleModal', title: '查看评论', width: '', height: '550', iframe: ec_comment_path(ec_comment)} %>
+                    <%= link_to '回复', 'javascript:;', data: {toggle: 'modals', target: 'roleModal', title: '回复评论', width: '', height: '550', iframe: edit_ec_comment_path(ec_comment)} %>
+                    <%= link_to '删除', ec_comment_path(ec_comment), {confirm: '确定删除？', method: :delete} %>
+                  </td>
+                </tr>
+              <% end %>
+              <% if @ec_comments.count == 0 %>
+                <tr>
+                  <td colspan="11"><span class="green">无记录</span></td>
+                </tr>
+              <% end %>
+            </tboday>
+          </table>
+          <%= paginate @ec_comments %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+<% end %>

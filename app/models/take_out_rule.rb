@@ -1,0 +1,2 @@
+class TakeOutRule < BookRule
+end

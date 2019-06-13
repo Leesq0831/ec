@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" class="en">
+  <head>
+    <meta charset="UTF-8">
+    <title><%= content_for?(:title) ? yield(:title) : "灏瀚科技小程序" %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telphone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <%= stylesheet_link_tag "/wap/css/weui.min", media: "all" %>
+    <%= javascript_include_tag "/javascripts/jquery-1.8.2.min" %>
+  </head>
+  <body ontouchstart>
+    <%= yield %>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+<% parent_class, sub_class = 'open active', 'open active' %>
+
+<ul class="nav nav-list">
+  <li class="<%= current_page?(profile_path) ? "active" : '' %>">
+    <%= link_to profile_path do %><i class="fa fa-user"></i><span class="menu-text">我的账号</span><% end %>
+  </li>
+  <li class="<%= current_page?(new_password_path) ? "active" : '' %>">
+    <%= link_to new_password_path do %><i class="fa fa-key"></i><span class="menu-text">修改密码</span><% end %>
+  </li>
+  <li class="<%= current_page?(ec_slides_path) ? "active" : '' %>">
+    <%= link_to ec_slides_path do %><i class="fa fa-plus"></i><span class="menu-text">首页幻灯片</span><% end %>
+  </li>
+  <li class="<%= current_page?(ec_logistic_templates_path) ? "active" : '' %>">
+    <%= link_to ec_logistic_templates_path do %><i class="fa fa-plus"></i><span class="menu-text">物流运费</span><% end %>
+  </li>
+  <li class="<%= current_page?(payment_settings_path) ? "active" : '' %>">
+    <%= link_to payment_settings_path do %><i class="fa fa-rmb"></i><span class="menu-text">支付设置</span><% end %>
+  </li>
+<!--
+  <li class="<%= controller_name =~ /sms_expenses|sms_orders/i || ['sms_switch'].include?(action_name) ? 'active' : '' %>">
+    <%= link_to sms_expenses_path do %><i class="fa fa-file-text"></i><span class="menu-text">短消息管理</span><% end %>
+  </li> -->
+</ul>

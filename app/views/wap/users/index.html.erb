@@ -1,0 +1,111 @@
+<% title "个人中心" %>
+
+<div class="html mine">
+  <div class="toptil">
+    <img src="<%= @user.wx_user.try(:headimgurl) || 'img/head01.jpg' %>" class="headimg">
+    <p class="name"><%= @user.name %></p>
+    <!-- 手机号这一块的dom用js处理 不用套  查看下方js -->
+    <div class="phone">
+      <input type="number" name="" placeholder="赶紧来绑定你的手机吧" class="ctrol" id="J_phone" disabled="disabled" value="<%= @user.mobile %>">
+      <a href="javascript:;" class="" id="J_p_btn"></a>
+      <p class="p_btns dsn" id="J_p_btns">
+        <a href="javascript:;" class="p_btndo p_btndoa" id="J_p_btn_sure">保存</a>
+        <a href="javascript:;" class="p_btndo" id="J_p_btn_cal">取消</a>
+      </p>
+    </div>
+  </div>
+
+  <ul class="mnav mt10 bgcfff alic ovh">
+    <li class="mli">
+      <a href="<%= wap_orders_path(type: 'pending') %>" class="mli_a">
+        <p class="icon icona"></p>
+        <p class="iname">待付款</p>
+      </a>
+    </li>
+    <li class="mli">
+      <a href="<%= wap_orders_path(type: 'delivered') %>" class="mli_a">
+        <p class="icon iconb"></p>
+        <p class="iname">待收货</p>
+      </a>
+    </li>
+    <li class="mli">
+      <a href="<%= wap_orders_path(type: 'confirmed') %>" class="mli_a">
+        <p class="icon iconc"></p>
+        <p class="iname">待评价</p>
+      </a>
+    </li>
+    <li class="mli">
+      <a href="<%= wap_orders_path(type: 'all') %>" class="mli_a">
+        <p class="icon icond"></p>
+        <p class="iname">全部订单</p>
+      </a>
+    </li>
+  </ul>
+  <div class="dtlist mt10">
+    <a href="/wap/favorites" class="item"><img class="ico" src="/wap/assets/images/item02a.png">我的收藏</a>
+    <a href="/wap/addresses" class="item"><img class="ico" src="/wap/assets/images/item02b.png">我的收货地址</a>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(function(){
+    var J_phone = $('#J_phone'),
+      J_p_btn = $('#J_p_btn'),
+      J_p_btns = $('#J_p_btns');
+
+    var isajax = false; //设置开关 防止重复提交
+
+    var phonenum = "<%= @user.mobile %>"; // 渲染手机号，无则为空或null
+    function setstate(){
+      if(phonenum){
+        J_phone.val(phonenum);
+        J_p_btn.attr('class','p_btn p_btn_edit').html("更换手机号");
+      }else{
+        J_p_btn.attr('class','p_btn p_btn_add').html("添加手机号");
+      };
+    };
+    setstate();
+    J_p_btn.click(function(){
+      J_phone.removeAttr('disabled');
+      J_p_btn.hide();
+      J_p_btns.show();
+      J_phone.focus();
+    });
+    $('#J_p_btn_cal').click(function(){
+      J_phone.val(phonenum);
+      J_p_btn.show();
+      J_p_btns.hide();
+      J_phone.attr('disabled','disabled');
+      setstate();
+    });
+    //保存手机号
+    $('#J_p_btn_sure').click(function(){
+      var regphone = /^[1][0-9]{10}$/ig,
+        phone = J_phone.val().trim();
+          if(!regphone.test(phone)){
+              CUES.tip({"msg":"手机号不正确","type":"danger"})
+              return false;
+          };
+          isajax = true;
+      // ajax保存手机号
+      $.ajax({
+        type: "POST",
+        url: "/wap/users/set_mobile",
+        data: {mobile: phone},
+        dataType: "json",
+        success: function(res){
+          isajax = false;
+          if(res.code){
+            CUES.tip({"msg":"提交成功","type":"success"});
+            phonenum = phone;
+            J_phone.val(phonenum);
+            J_p_btn.show();
+            J_p_btns.hide();
+            J_phone.attr('disabled','disabled');
+            setstate();
+          }
+        }
+      });
+    });
+  });
+</script>

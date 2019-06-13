@@ -1,0 +1,137 @@
+{
+    "code": 1,
+    "data": [
+    	{
+    		"state":1,
+            "ordernumber":"12sd61f535f4fw",
+    		"desc":"代付款，描述字段",
+    		"shopname":"Mr Nice好好先生餐厅Nice好好先生餐厅Nice好好先生餐厅(金虹桥店)",
+    		"list":[
+    			{
+    				"pid":1,
+    				"pname":"法国进口红酒 拉菲传奇波尔多干红葡萄酒",
+    				"price":250.5,
+                    "norms":"一箱",
+    				"number":10
+    			},
+    			{
+    				"pid":2,
+    				"pname":"法国进口红酒 拉菲传奇波尔多干红葡萄酒",
+    				"price":300,
+    				"number":2
+    			}
+    		]
+    	},
+    	{
+    		"state":2,
+            "ordernumber":"12sd61f535f4fw",
+    		"desc":"已发货，描述字段",
+    		"shopname":"Mr Nice好好先生餐厅(金虹桥店)",
+    		"list":[
+    			{
+    				"pid":1,
+    				"pname":"法国进口红酒 拉菲传奇波尔多干红葡萄酒",
+    				"price":250.5,
+                    "norms":"一件",
+    				"number":10
+    			}
+    		]
+    	},
+    	{
+    		"state":3,
+            "ordernumber":"12sd61f535f4fw",
+    		"desc":"申请退款，描述字段",
+    		"shopname":"Mr Nice好好先生餐厅(金虹桥店)",
+    		"list":[
+    			{
+    				"pid":1,
+    				"pname":"法国进口红酒 拉菲传奇波尔多干红葡萄酒",
+    				"price":250.5,
+    				"number":10
+    			},
+    			{
+    				"pid":1,
+    				"pname":"法国进口红酒 拉菲传奇波尔多干红葡萄酒",
+    				"price":250.5,
+    				"number":10
+    			}
+    		]
+    	},
+    	{
+    		"state":3,
+            "ordernumber":"12sd61f535f4fw",
+    		"desc":"申请退款，描述字段",
+    		"shopname":"Mr Nice好好先生餐厅(金虹桥店)",
+    		"list":[
+    			{
+    				"pid":1,
+    				"pname":"法国进口红酒 拉菲传奇波尔多干红葡萄酒",
+    				"price":250.5,
+    				"number":10
+    			},
+    			{
+    				"pid":1,
+    				"pname":"法国进口红酒 拉菲传奇波尔多干红葡萄酒",
+    				"price":250.5,
+    				"number":10
+    			}
+    		]
+    	},
+    	{
+    		"state":4,
+            "ordernumber":"12sd61f535f4fw",
+    		"desc":"已付款，描述字段",
+    		"shopname":"Mr Nice好好先生餐厅(金虹桥店)",
+    		"list":[
+    			{
+    				"pid":1,
+    				"pname":"法国进口红酒 拉菲传奇波尔多干红葡萄酒",
+    				"price":250.5,
+    				"number":10
+    			}
+    		]
+    	},
+    	{
+    		"state":5,
+            "ordernumber":"12sd61f535f4fw",
+    		"desc":"已完成，描述字段",
+    		"shopname":"Mr Nice好好先生餐厅(金虹桥店)",
+    		"list":[
+    			{
+    				"pid":1,
+    				"pname":"法国进口红酒 拉菲传奇波尔多干红葡萄酒",
+    				"price":250.5,
+    				"number":10
+    			}
+    		]
+    	},
+    	{
+    		"state":6,
+            "ordernumber":"12sd61f535f4fw",
+    		"desc":"已关闭，描述字段",
+    		"shopname":"Mr Nice好好先生餐厅(金虹桥店)",
+    		"list":[
+    			{
+    				"pid":1,
+    				"pname":"法国进口红酒 拉菲传奇波尔多干红葡萄酒",
+    				"price":250.5,
+    				"number":10
+    			}
+    		]
+    	},
+    	{
+    		"state":7,
+            "ordernumber":"12sd61f535f4fw",
+    		"desc":"已退款，描述字段",
+    		"shopname":"Mr Nice好好先生餐厅(金虹桥店)",
+    		"list":[
+    			{
+    				"pid":1,
+    				"pname":"法国进口红酒 拉菲传奇波尔多干红葡萄酒",
+    				"price":250.5,
+    				"number":10
+    			}
+    		]
+    	}
+    ]
+}

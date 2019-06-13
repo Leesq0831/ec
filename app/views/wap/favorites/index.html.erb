@@ -1,0 +1,56 @@
+<% title "我的收藏" %>
+<div class="html mine_collect">
+  <% if @favs.each_with_index do |fav, index| %>
+    <div class="dtlist">
+      <div class="J_item item">
+  			<%= link_to wap_item_path(fav.ec_item) do %><img src="<%= fav.ec_item.ec_product.ec_picture.try(:pic_url) %>" class="imgp"><% end %>
+  			<p class="til"><%= link_to fav.ec_item.ec_product.name, wap_item_path(fav.ec_item) %></p>
+        <p class="pnor">规格：<%= fav.ec_item.name %></p>
+  			<p class="price"><span class="ado_y">￥</span><%= f fav.ec_item.price %></p>
+        <a href="javascript:;" data-pid="<%= fav.id %>" class="J_del del">取消<br>收藏</a>
+  		</div>
+    </div>
+  <% end.blank? %>
+    <div class="empty">
+      <img src="/wap/assets/images/adr_em.png" class="eimg">
+      <p class="etext">暂无收藏的商品</p>
+    </div>
+  <% end %>
+</div>
+
+<script type="text/javascript">
+  $(function(){
+    var J_moren = $('.J_moren'),
+      J_del = $('.J_del');
+
+    var isajax = false; //设置开关 防止重复提交
+
+    var J_item = document.getElementsByClassName('J_item');
+    new leftslide({
+      "elms":J_item,
+      "devi":80
+    });
+
+    // 删除地址
+    J_del.click(function(){
+      var self = $(this),pid = self.attr('data-pid'),item = self.parent();
+      CUES.confirm({"msg":"确认要取消收藏这个商品吗？","callback":function(){
+        isajax = true;
+        // ajax保存手机号
+        $.ajax({
+          type: "DELETE",
+          url: "/wap/favorites/" + pid ,
+          data: {},
+          dataType: "json",
+          success: function(res){
+            isajax = false;
+            if(res.code){
+              CUES.tip({"msg":"删除成功","type":"success"});
+              item.slideUp();
+            }
+          }
+        });
+      }})
+    });
+  });
+</script>

@@ -1,0 +1,219 @@
+<% content_for :booking_top_pic do %>
+  <header>
+    <a href="<%= mobile_booking_booking_item_url(id: params[:booking_item_id].to_i, site_id: @site.id, anchor: "mp.weixin.qq.com")%>" class="ico-prev">
+      <img src="/assets/mobile/wserver/ico-back.png"/>
+    </a>
+    <h1>填写订单信息</h1>
+  </header>
+<% end %>
+
+<%= form_for @booking_order, url: mobile_booking_booking_orders_url, method: 'post', remote: true do |f| %>
+  <%= f.hidden_field :user_id %>
+  <%= f.hidden_field :booking_item_id %>
+  <%= f.hidden_field :price %>
+  <%= f.hidden_field :status %>
+  <!--<input name="booking_item_qty" id="booking_item_qty" value="<%#= @booking_item.qty %>" type="hidden">-->
+  <div class="box-form">
+    <p>
+      <span class="fl">用户姓名：</span>
+      <span class="fr">
+        <%= f.text_field :username %>
+      </span>
+    </p>
+    <p>
+      <span class="fl">联系电话：</span>
+      <span class="fr">
+        <%= f.text_field :tel %>
+      </span>
+    </p>
+
+    <p>
+      <span class="fl">收货地址：</span>
+      <span class="fr">
+        <%= f.text_field :address %>
+      </span>
+    </p>
+    <% if @booking.deliver? %>
+      <p>
+        <span class="fl">快递公司</span>
+        <span class="fr">
+          <%= f.select :express, @services_config['express'],{},class: "col-xs-12 fr1" %>
+        </span>
+      </p>
+    <% end %>
+
+    <div style="display: none;">
+      <p>
+        <span class="fl">预订数量：</span>
+        <span class="fr">
+          <%= f.text_field :qty %>
+        </span>
+      </p>
+      <p>
+        <span class="fl">预订日期：</span>
+        <span class="fr">
+          <%= f.text_field :booking_at, class: 'input date', readonly: true %>
+        </span>
+      </p>
+    </div>
+
+    <p>
+      <span class="fl">备注内容：</span>
+      <span class="fr">
+        <%= f.text_area :description, rows: 5, placeholder: @booking.descr_placeholder %>
+      </span>
+    </p>
+
+    <p>
+      <div class="tit1" style="padding-left:5px;">支付信息</div>
+      <div class="bgf bord1 radiu3" style="padding: 5px">
+        <div class="zhifu_list">
+          <ul>
+            <li>
+              <span class="right">价格：<%= f @booking_order.price %></span>
+            </li>
+            <% if @booking_order.discount > 0 %>
+              <li>
+                <span class="right">会员优惠：<%= f @booking_order.discount %></span>
+              </li>
+            <% end %>
+            <li>
+              <span class="right">配送费：<%= f @booking_order.booking.deliver_amount_f %></span>
+            </li>
+            <li>
+              <span class="right">支付金额：<%= f @booking_order.total_amount %></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </p>
+
+    <% if @booking_order.pending? %>
+    <p>
+      <div class="tit1" style="padding-left:5px;">支付方式</div>
+      <div class="bgf bord1 radiu3">
+        <div class="zhifu_list">
+          <ul>
+            <% if @payment_types.present? %>
+              <% @payment_types.each_with_index do |payment_type, index|%>
+                <li class="<%= 'on' if (index.eql?(0) && f.object.payment_type_id == nil) || payment_type.id == f.object.payment_type_id %>">
+                 <span class="right check_icon"></span>
+                 <span class="left zf_pic <%= PaymentType::CSS_CLASS[payment_type.id] %>"></span>
+                 <span><%= payment_type.name %></span>
+                </li>
+                <%= f.radio_button :payment_type_id, payment_type.id, {checked: (index.eql?(0) && f.object.new_record?) || payment_type.id == f.object.payment_type_id, style: 'display:none;'} %>
+              <% end %>
+            <% else %>
+              <span>没有可用的支付方式</span>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </p>
+    <% end %>
+
+    <p>
+      <div class="blank1"></div>
+      <input class="btn order_sub" type="submit" value="提交" style="width:96%;margin-left:2%;" />
+    </p>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+    $( function () {
+
+        $(".date").datepicker({
+            autoSize: true,
+            dateFormat: 'yy-mm-dd',
+            dayNamesMin:["周日","周一","周二","周三","周四","周五","周六"],
+            monthNames:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+            monthNamesShort:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"]
+        });
+
+
+        $('.btn').click(function(event) {
+            var tel_reg = /^(-|\+)?\d+(\.\d+)?$/;
+            var now = new Date().format("yyyy-MM-dd");
+            if(parseInt($('#booking_item_qty').val()) == 0){
+                alert("商品已预定完，不能预定了！");
+                return false;
+            }else if(!$('#booking_order_username').val()){
+                alert("联系人不能为空");
+                $('#booking_order_username').focus();
+                return false;
+            }else if(!$('#booking_order_tel').val()){
+                alert("联系电话不能为空");
+                $('#booking_order_tel').focus();
+                return false;
+            }else if(!tel_reg.test($('#booking_order_tel').val())){
+                alert("联系电话必须是数字");
+                $('#booking_order_tel').focus();
+                return false;
+            }else if(!$('#booking_order_qty').val()){
+                alert("预订数量不能为空");
+                $('#booking_order_qty').focus();
+                return false;
+            }else if(!tel_reg.test($('#booking_order_qty').val())){
+                alert("预订数量必须是数字");
+                $('#booking_order_qty').focus();
+                return false;
+            }else if(parseInt($('#booking_order_qty').val()) <= 0){
+                alert("预订数量必须大于0");
+                $('#booking_order_qty').focus();
+                return false;
+            }
+//            else if(parseInt($('#booking_order_qty').val()) > parseInt($('#booking_item_qty').val())){
+//                alert("预订数量不能大于商品数量");
+//                $('#booking_order_qty').focus();
+//                return false;
+//            }
+//            else if(!$('#booking_order_booking_at').val()){
+//                alert("请选择预订日期");
+//                $('#booking_order_booking_at').focus();
+//                return false;
+//            }else if($('#booking_order_booking_at').val() < now){
+//                alert("预订日期不能小于当前日期");
+//                $('#booking_order_booking_at').focus();
+//                return false;
+//            }
+
+            if(!$('#booking_order_address').val()){
+                alert("地址不能为空");
+                $('#booking_order_address').focus();
+                return false;
+            }else if(!$('#booking_order_booking_at').val()){
+                // alert("请选择预订日期");
+                // $('#booking_order_booking_at').focus();
+                // return false;
+            }else if($('#booking_order_booking_at').val() < now){
+                // alert("预订日期不能小于当前日期");
+                // $('#booking_order_booking_at').focus();
+                // return false;
+            };
+
+            <% if @booking.is_require_descr? %>
+              if(!$('#booking_order_description').val()){
+                alert("备注内容不能为空");
+                $('#booking_order_description').focus();
+                return false;
+              };
+            <% end %>
+        });
+
+        $(".zhifu_list ul li").click(function(){
+          $(this).addClass("on").siblings().removeClass("on");
+          $(this).next().prop('checked', true);
+        });
+    });
+</script>
+<style>
+  .fr1{width: 100%;
+    border-radius: 5px;
+    border: none;
+    overflow: hidden;
+    height: auto;
+    padding: 0 5%;
+    background-color: #FFFFFF;
+
+  }
+</style>

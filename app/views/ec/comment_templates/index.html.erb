@@ -1,0 +1,51 @@
+<% content_for :main_content do %>
+  <div class="main-content ">
+    <div class="breadcrumbs" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <%= render 'partials/home' %>
+        <!-- <li><%#= link_to '微服务', bookings_path %></li> -->
+        <li><%= link_to '评论模板', ec_comment_templates_path %></li>
+      </ul>
+      <%#= render '/layouts/qrcode' %>
+    </div>
+
+    <div class="page-content">
+      <%= render "ec/order_rules/top_tab" %>
+
+      <div class="col-xs-12 margin-top-20">
+        <div class="pull-right">
+          <%= link_to '新增', 'javascript:;', data: {toggle: 'modals', height: '300', title: '新增评论模板', iframe: new_ec_comment_template_path}, class: 'btn btn-primary btn-sm' %>
+        </div>
+      </div>
+
+      <div class="col-xs-12 margin-top-20">
+        <table id="goodsTable" class="table table-striped table-bordered table-hover dataTable ">
+          <thead>
+          <tr>
+            <th>内容</th>
+            <th>创建时间</th>
+            <th>操作</th>
+          </tr>
+          </thead>
+          <tbody id="colleges_body">
+          <% @comment_templates.each do |comment_template| %>
+              <tr>
+                <td><%= comment_template.content %></td>
+                <td><%= comment_template.created_at %></td>
+                <td class="txt-left-align">
+                  <%= link_to '编辑', 'javascript:;', data: {toggle: 'modals', height: '300', title: '编辑评论模板', iframe: edit_ec_comment_template_path(comment_template)} %>
+                  <%= link_to '删除', ec_comment_template_path(comment_template), data: {method: :delete, confirm: '确定要删除吗？'} %>
+                </td>
+              </tr>
+          <% end %>
+          <% if @comment_templates.blank? %>
+            <tr><td colspan="7">无记录</td></tr>
+          <% end %>
+          </tbody>
+        </table>
+        <%= paginate @comment_templates %>
+      </div>
+    </div>
+
+  </div>
+<% end %>

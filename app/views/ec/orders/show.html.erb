@@ -1,0 +1,186 @@
+<% content_for :main_content do %>
+  <div class="main-content ">
+    <div class="breadcrumbs" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <%= render 'partials/home' %>
+        <li><%= link_to '订单管理', ec_orders_path %></li>
+        <li><%= link_to '订单详情', 'javascript:;' %></li>
+      </ul>
+      <%#= render '/layouts/qrcode' %>
+    </div>
+
+    <div class="page-content">
+      <div class="col-md-12">
+      <table class="table table-detail table-down">
+        <thead>
+          <tr>
+            <th colspan="2">订单信息</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td width="100">订单编号：</td>
+            <td><%= @ec_order.order_no %></td>
+          </tr>
+          <tr>
+            <td>支付方式：</td>
+            <td><%= @ec_order.pay_type_name %></td>
+          </tr>
+          <tr>
+            <td>支付状态：</td>
+            <td><%= @ec_order.status_name %></td>
+          </tr>
+          <tr>
+            <td>下单人：</td>
+            <td><%= @ec_order.user.try(:wx_user).try(:nickname) %></td>
+          </tr>
+          <tr>
+            <td>下单时间：</td>
+            <td><%= @ec_order.created_at %></td>
+          </tr>
+          <tr>
+            <td>付款时间：</td>
+            <td><%= @ec_order.paid_at %></td>
+          </tr>
+<!--           <tr>
+            <td width="100">订单来源：</td>
+            <td><%#= @ec_order.offline? ? "#{@ec_order.source_type_name} - #{@ec_order.source_shop.try(:name)}" : @ec_order.source_type_name %></td>
+          </tr> -->
+        </tbody>
+      </table>
+      <table class="table table-detail table-down">
+        <thead>
+          <tr>
+            <th colspan="2">收货人信息</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td width="100">收货人姓名：</td>
+            <td><%= @ec_order.username %></td>
+          </tr>
+          <tr>
+            <td>联系电话：</td>
+            <td><%= @ec_order.mobile %></td>
+          </tr>
+<!--           <tr>
+            <td>配送类型：</td>
+            <td><%= @ec_order.delivery_type_name %></td>
+          </tr> -->
+          <tr>
+            <td>收货地址：</td>
+            <td><%= @ec_order.address_display %></td>
+          </tr>
+<!--           <% if @ec_order.restaurant? %>
+            <tr>
+              <td>就餐时间：</td>
+              <td><%= @ec_order.dining_date %> <%= @ec_order.start_dining_at %>-<%= @ec_order.end_dining_at %></td>
+            </tr>
+            <tr>
+              <td>取货码：</td>
+              <td><%= @ec_order.captcha %></td>
+            </tr>
+          <% end %> -->
+        </tbody>
+      </table>
+<!--       <table class="table table-detail table-down">
+        <thead>
+          <tr>
+            <th colspan="2">发票信息</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td width="100">开具发票：</td>
+            <td><%= @ec_order.need_invoice? ? '是' : '否' %></td>
+          </tr>
+          <% if @ec_order.need_invoice? %>
+            <tr>
+              <td>发票类型：</td>
+              <td><%= @ec_order.invoice_type_name %></td>
+            </tr>
+            <tr>
+              <td>发票抬头：</td>
+              <td><%= @ec_order.invoice_title %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table> -->
+      <table class="table table-detail table-down">
+        <thead>
+          <tr>
+            <th colspan="3">物流信息</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%#= render "shipping_field", f: f, object: @ec_order %>
+          <tr>
+            <td width="100">物流状态：</td>
+            <td><%= @ec_order.logistic_status_name %></td>
+          </tr>
+          <tr>
+            <td width="100">物流公司：</td>
+            <td><%= @ec_order.ec_logistic_company.try(:name) %></td>
+          </tr>
+          <tr>
+            <td width="100">物流单号：</td>
+            <td>
+              <% if @ec_order.logistic_no.present? %>
+                <a href="https://m.kuaidi100.com/result.jsp?nu=<%= @ec_order.logistic_no %>" target="_blank"><%= @ec_order.logistic_no %></a>
+              <% end %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="table table-detail table-down">
+        <thead>
+          <tr>
+            <th colspan="2">备注信息</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td colspan="2">
+              <%#= f.text_area :description, placeholder: "点击填写备注信息", class: "form-control input-focus" %>
+              <%= @ec_order.description %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table table-striped table-bordered table-hover table-down">
+        <thead>
+          <tr>
+            <th>商品编号</th>
+            <th>商品名称</th>
+            <th>商品数量</th>
+            <th>商品单价（元）</th>
+            <th>商品总价（元）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @ec_order.ec_order_items.each do |item| %>
+          <tr>
+            <td><%= item.ec_item.sku %></td>
+            <td><%= link_to item.product_name, items_ec_product_path(item.ec_item.ec_product) %></td>
+            <td><%= item.qty %></td>
+            <td><%= f item.price %></td>
+            <td><%= f item.total_price %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <p class="text-right">
+        商品金额：<%= f @ec_order.total_amount %>元
+        　+　运费：<%= f @ec_order.freight_value %>元
+        <% if @ec_order.discount.to_f > 0 %>
+          　+　会员折扣：<b class='red'>-<%= f @ec_order.discount %></b>元
+        <% end %>
+        　=　实收款：<b class="bigger-200 red"><%= f @ec_order.pay_amount %></b>元
+      </p>
+      </div>
+
+    </div>
+  </div>
+<% end %>

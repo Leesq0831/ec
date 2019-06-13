@@ -1,0 +1,64 @@
+<% if current_employee %>
+  <% parent_class, sub_class = 'open active', 'open active' %>
+  <% roles = current_employee.roles %>
+  <ul class="nav nav-list sly">
+    <li class="<%= parent_class if current_page?(console_path) %>">
+      <a href="<%= console_url %>"><i class="icon-home"></i><span class="menu-text">控制台</span></a>
+    </li>
+
+    <% if (roles & [20,21].flatten.uniq).count > 0 %>
+      <li class="<%= parent_class if controller_name =~ /employees|employee_roles/ %>">
+        <%= left_nav_dropdown 'fa fa-key', '账号权限' %>
+        <ul class="submenu" style="display: <%= controller_name =~ /employees|employee_roles/ ? 'block;' : 'none;'%>">
+          <%= link_to_left_nav( '员工管理', employees_path, current_page?(employees_path) ) if roles.include?(20) %>
+          <%= link_to_left_nav( '角色管理', employee_roles_path, current_page?(employee_roles_path) ) if roles.include?(21) %>
+        </ul>
+      </li>
+    <% end %>
+
+    <% if (roles & [40,41,42,43,44,45,46].flatten.uniq).count > 0 %>
+      <li class="<%= parent_class if controller_name =~ /products|product_|stocks|prices|logistic_|orders|comments|order_rules|comment_templates/ && controller_path =~ /ec\// %>">
+        <%= left_nav_dropdown 'icon-list', '商城管理' %>
+        <ul class="submenu" style="display: <%= controller_name =~ /products|product_|stocks|prices|logistic_|orders|comments|order_rules|comment_templates/ && controller_path =~ /ec\// ? 'block;' : 'none;'%>">
+          <%= link_to_left_nav( '商品管理', ec_products_path, current_page?(ec_products_path) ) if roles.include?(40) %>
+          <%= link_to_left_nav( '分类管理', ec_product_categories_path, current_page?(ec_product_categories_path) ) if roles.include?(42) %>
+          <%= link_to_left_nav( '库存管理', ec_stocks_path, current_page?(ec_stocks_path) ) if roles.include?(41) %>
+          <%= link_to_left_nav( '订单管理', ec_orders_path, current_page?(ec_orders_path) ) if roles.include?(45) %>
+          <%= link_to_left_nav( '订单设置', ec_order_rules_path, current_page?(ec_order_rules_path) ) if roles.include?(46)%>
+
+          <% if roles.include?(44) %>
+            <li class="<%= current_page?(ec_logistic_templates_path) || current_page?(ec_logistic_companies_path) ? "active" : '' %>">
+              <%= link_to ec_logistic_companies_path do %><span class="menu-text">物流运费</span><% end %>
+            </li>
+          <% end %>
+          <%= link_to_left_nav( '服务承诺', ec_product_tags_path, current_page?(ec_product_tags_path) ) if roles.include?(43) %>
+        </ul>
+      </li>
+    <% end %>
+   
+    <% if roles.include?(30) %>
+      <li>
+        <a href="<%= ec_users_path %>">
+          <i class="icon-user"></i>
+          <span class="menu-text">用户管理</span>
+        </a>
+      </li>
+    <% end %>
+
+    <% if (roles & [1,2,3,4].flatten.uniq).count > 0 %>
+      <li class="<%= parent_class if controller_name =~ /accounts|password|slides|payment_settings/ %>">
+        <%= left_nav_dropdown 'icon-cog', '系统设置' %>
+        <ul class="submenu" style="display: <%= controller_name =~ /accounts|password|slides|payment_settings/ ? 'block;' : 'none;'%>">
+          <%= link_to_left_nav( '商家信息', profile_path, current_page?(profile_path)) if roles.include?(1) %>
+
+          <%= link_to_left_nav( '修改密码', new_password_path, current_page?(new_password_path)) if roles.include?(2) %>
+
+          <%= link_to_left_nav( '首页设置', ec_slides_path, current_page?(ec_slides_path)) if roles.include?(3) %>
+
+          <%= link_to_left_nav( '支付设置', payment_settings_path, current_page?(payment_settings_path)) if roles.include?(4) %>
+
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

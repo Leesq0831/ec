@@ -1,0 +1,136 @@
+<%= nested_form_for @article, url: @article.new_record? ? @article : site_article_path(@article), validate: true do |f| %>
+    <div class="col-xs-12">
+      <div class="form-group">
+        <label class="control-label">分类<span class="required-star">*</span></label>
+        <div class="clearfix">
+           <%=f.select :site_category_id, @current_site.site_categories.send(@article.news? ? 'news' : 'case').pluck(:name,:id), {}, class: "col-md-4" %>
+        </div>
+      </div>
+<!-- 
+      <div class="form-group">
+        <label class="control-label">标签<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= hidden_field_tag 'site_article[site_tag_ids][]', '' %>
+          <% @current_site.site_tags.each do |tag| %>
+            <label><%= check_box_tag 'site_article[site_tag_ids][]', tag.id, @article.site_tags.include?(tag) %> <%= tag.name %></label>
+          <% end %>
+        </div>
+      </div>
+ -->
+      <div class="form-group">
+        <label class="control-label">标题<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= f.text_field :name, maxlength: 32, class: "col-md-4"%>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label">摘要<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= f.text_field :summary, maxlength: 32, class: 'col-md-4' %>
+        </div>
+      </div>
+
+      <% unless @article.new_record? %>
+        <div class="form-group">
+          <label class="control-label">排序<span class="required-star">*</span></label>
+          <div class="clearfix">
+            <%= f.text_field :position, class: "col-md-4"%>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <label class="control-label">上传图片<span class="required-star">*</span><small class="text-warning">图片建议尺寸：640像素*640像素，可上传多张</small></label>
+        <div class="clearfix">
+          <div class="cieldon-file" data-type="6" data-width="160" data-height="160" data-imgs_type="site_article_site_pictures"  data-img="<%= f.object.site_pictures.map(&:format_pic_url).map(&:to_s).join(',') %>"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label">内容<span class="required-star">*</span></label>
+        <div class="clearfix">
+          <%= render "shared/form_rich_text", field_name: "content", obj: f.object, f: f, wrapper_html_options: {class: "form-control"}%>
+        </div>
+      </div>
+
+      <div class="form-group ">
+        <%= f.submit '确定', class: 'btn btn-sm btn-primary' %>
+        <a href="javascript:;" class="btn btn-sm btn-default" onclick="javascript:history.go(-1);">返回</a>
+      </div>
+
+    </div>
+<% end %>
+<% content_for :custom_js do %>
+    <script type="text/javascript">
+        function set_info(element){
+            var html = '<div class="modal fade modal-text" id="popup-confirm" style="display: block;">' +
+                    '<div class="modal-dialog">' +
+                    '<div class="modal-content">' +
+                    '<div class="modal-header">' +
+                    '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+                    '<h4 class="modal-title">系统提示</h4>' +
+                    '</div><form role="form" action="" method="">';
+
+            html += '<div class="modal-body">' +
+                    '<p class="text-center">确认删除图片</p></div>' +
+                    '<div class="clearfix"></div>';
+
+            html += '<div class="modal-footer">';
+            html += '<a href="javascript:;" class="btn btn-sm btn-primary" id="pop-confrim-submit">确定</a>';
+            html += '<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">取消</button>';
+            html += '</div></form>';
+            html += '</div>';
+
+            html += '</div></div></div>';
+            $('#popup-confirm').remove();
+            $("body").append(html);
+            $('#popup-confirm').modal('show');
+            $('#popup-confirm').on('click', 'button[data-dismiss="modal"], .btn-primary', function(){
+                var dc = $(parent.document),
+                    $modal = dc.find('.modal'),
+                    $modalBg = dc.find(".modal-backdrop")
+                $modal.attr('aria-hidden', true).removeClass('in');
+                $modalBg.remove();
+                $(parent.document.body).removeClass('modal-open');
+                $modal.remove();
+                if($(this).hasClass('btn-primary')){
+                    $(element).next().val(1);
+                    $(element).closest('.file-img').hide();
+                }
+            });
+            return false;
+        }
+
+        $(function(){
+            var imgs = $('.file-img');
+            <% @article.site_pictures.each_with_index do |m, i| %>
+                <% uuid = UUIDTools::UUID.random_create.to_s[0,6] %>
+                imgs.eq(parseInt('<%= i + 1%>')).append('<input class="destroy" name="site_article[site_pictures_attributes][<%= uuid %>][_destroy]" type="hidden">')
+                imgs.eq(parseInt('<%= i + 1%>')).append('<input class="destroy" name="site_article[site_pictures_attributes][<%= uuid %>][id]" type="hidden" value="<%= m.id %>">')
+            <% end %>
+
+
+            $('.cieldon-file').on('click', '.file-del', function(){
+                set_info($(this));
+            });
+            $(".hidden_booking_category_id").val($('.booking_category:visible:last').val());
+            $("#selects").on("change", ".booking_category", function(){
+                if($(this).val() == "-1"){
+                }
+                else{
+                    $.ajax({
+                        type: "GET",
+                        url: "/site/categories/" + $(this).val() + "?rel=" + ($(this).attr('rel')),
+                        success: function(data) {
+                            return false;
+                        },
+                        error: function() {
+                            return false;
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+<% end %>

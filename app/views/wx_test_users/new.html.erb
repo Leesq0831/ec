@@ -1,0 +1,15 @@
+<%= form_for @wx_test_user, url: @wx_test_user.new_record? ? wx_test_users_path : wx_test_user_path(@wx_test_user), validate: true,html:{class: 'form'} do |f| %>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>微信号<span class="required-star">*</span></label>
+      <div class="clearfix">
+        <%= f.text_field :wx_id, class: 'col-xs-12' %>
+      </div>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  <div class="modal-footer">
+    <%= f.submit '保存', class: "btn btn-sm btn-primary" %>
+    <%= f.button '取消', type: :reset, class: "btn btn-sm btn-default", data: { dismiss: "modals" } %>
+  </div>
+<% end %>

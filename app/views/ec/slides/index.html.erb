@@ -1,0 +1,228 @@
+<% content_for :main_content do %>
+  <div class="main-content ">
+    <div class="breadcrumbs" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <%= render 'partials/home' %>
+        <li><%= link_to '系统设置', 'javascript:;' %></li>
+        <li><%= link_to '首页设置', ec_slides_path %></li>
+      </ul>
+      <%#= render '/layouts/qrcode' %>
+    </div>
+
+    <div class="page-content">
+      <div class="row">
+        <div class="vwebsitePicture col-sm-12 margin-top-10">
+          <h3>轮播图</h3>
+          <ul class="ace-thumbnails thumbnails-1" style='margin-top: -10px'>
+            <% @ec_slides.swipe.each do |ec_slide| %>
+              <li>
+                <a href="javascript:;" title="<%= ec_slide.title %>" data-rel="colorbox">
+                  <img src="<%= ec_slide.pic_url %>" alt="">
+                  <div class="text">
+                    <div class="inner"><%= ec_slide.title %></div>
+                  </div>
+                </a>
+                <div class="tools">
+                  <a href="javascript:;">
+                    <i class="icon-trash btn-fa btn-remove"></i>
+                    <i class="icon-pencil btn-fa" data-toggle="modals" data-target="pictureModal" data-title="编辑轮播图" data-width="400" data-height="500" data-iframe="<%= edit_ec_slide_path(ec_slide) %>"></i>
+                  </a>
+                  <%= link_to '', ec_slide_path(ec_slide), data: {method: :delete, confirm: '确定要删除吗？'}, style: 'display: none;', class: 'remove-picture' %>
+                </div>
+              </li>
+            <% end %>
+
+            <li>
+              <%= link_to 'javascript:;', data: {toggle: 'modals', title: '新增轮播图', width: '400', height: '500', iframe: new_ec_slide_path(slide_type: 1, position: @ec_slides.swipe.count + 1)} do %>
+                <div class="text text-block">
+                  <div class="inner">添加图片<br><i class="icon-plus"></i></div>
+                </div>
+              <% end %>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="vwebsitePicture col-sm-12 margin-top-30">
+          <h3>Banner图</h3>
+          <ul class="ace-thumbnails thumbnails-1" style='margin-top: -10px'>
+            <% @ec_slides.banner.each do |ec_slide| %>
+              <li>
+                <a href="javascript:;" title="<%= ec_slide.title %>" data-rel="colorbox">
+                  <img src="<%= ec_slide.pic_url %>" alt="">
+                  <div class="text">
+                    <div class="inner"><%= ec_slide.title %></div>
+                  </div>
+                </a>
+                <div class="tools">
+                  <a href="javascript:;">
+                    <i class="icon-trash btn-fa btn-remove"></i>
+                    <i class="icon-pencil btn-fa" data-toggle="modals" data-target="pictureModal" data-title="编辑Banner图" data-width="400" data-height="500" data-iframe="<%= edit_ec_slide_path(ec_slide) %>"></i>
+                  </a>
+                  <%= link_to '', ec_slide_path(ec_slide), data: {method: :delete, confirm: '确定要删除吗？'}, style: 'display: none;', class: 'remove-picture' %>
+                </div>
+              </li>
+            <% end %>
+
+            <li>
+              <%= link_to 'javascript:;', data: {toggle: 'modals', title: '新增Banner图', width: '400', height: '500', iframe: new_ec_slide_path(slide_type: 3, position: @ec_slides.banner.count + 1)} do %>
+                <div class="text text-block">
+                  <div class="inner">添加图片<br><i class="icon-plus"></i></div>
+                </div>
+              <% end %>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="vwebsitePicture col-sm-12 margin-top-30">
+          <h3>首页菜单</h3>
+          <ul class="ace-thumbnails thumbnails-1" style='margin-top: -10px'>
+            <% @ec_slides.home_menu.each do |ec_slide| %>
+              <li style="width: 105px; height: 120px">
+                <a href="javascript:;" title="<%= ec_slide.title %>" data-rel="colorbox">
+                  <img src="<%= ec_slide.pic_url %>" alt="">
+                  <div class="text">
+                    <div class="inner"><%= ec_slide.title %></div>
+                  </div>
+                </a>
+                <div class="tools">
+                  <a href="javascript:;">
+                    <i class="icon-trash btn-fa btn-remove"></i>
+                    <i class="icon-pencil btn-fa" data-toggle="modals" data-target="pictureModal" data-title="编辑首页菜单" data-width="400" data-height="500" data-iframe="<%= edit_ec_slide_path(ec_slide) %>"></i>
+                  </a>
+                  <%= link_to '', ec_slide_path(ec_slide), data: {method: :delete, confirm: '确定要删除吗？'}, style: 'display: none;', class: 'remove-picture' %>
+                </div>
+              </li>
+            <% end %>
+            
+            <li style="width: 105px; height: 120px">
+              <%= link_to 'javascript:;', data: {toggle: 'modals', title: '新增首页菜单', width: '400', height: '500', iframe: new_ec_slide_path(slide_type: 2, position: @ec_slides.home_menu.count + 1)} do %>
+                <div class="text text-block">
+                  <div class="inner">添加<br><i class="icon-plus"></i></div>
+                </div>
+              <% end %>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="vwebsitePicture col-sm-12 margin-top-30">
+          <h3>小程序菜单</h3>
+          <ul class="ace-thumbnails thumbnails-1" style='margin-top: -10px'>
+            <% @ec_slides.bottom_menu.each do |ec_slide| %>
+              <li style="width: 81px;height: 81px">
+                <a href="javascript:;" title="<%= ec_slide.title %>" data-rel="colorbox">
+                  <img src="<%= ec_slide.pic_url %>" alt="">
+                  <div class="text">
+                    <div class="inner"><%= ec_slide.title %></div>
+                  </div>
+                </a>
+                <div class="tools">
+                  <a href="javascript:;">
+                    <i class="icon-trash btn-fa btn-remove"></i>
+                    <i class="icon-pencil btn-fa" data-toggle="modals" data-target="pictureModal" data-title="编辑底部菜单" data-width="400" data-height="500" data-iframe="<%= edit_ec_slide_path(ec_slide) %>"></i>
+                  </a>
+                  <%= link_to '', ec_slide_path(ec_slide), data: {method: :delete, confirm: '确定要删除吗？'}, style: 'display: none;', class: 'remove-picture' %>
+                </div>
+              </li>
+            <% end %>
+            
+            <% if @ec_slides.bottom_menu.count < 5 %>
+            <li style="width: 81px;height: 81px">
+              <%= link_to 'javascript:;', data: {toggle: 'modals', title: '新增底部菜单', width: '400', height: '500', iframe: new_ec_slide_path(slide_type: 4, position: @ec_slides.bottom_menu.count + 1)} do %>
+                <div class="text text-block">
+                  <div class="inner">添加<br><i class="icon-plus"></i></div>
+                </div>
+              <% end %>
+            </li>
+            <% end %>
+
+          </ul>
+        </div>
+      </div>
+
+<!-- 
+      <div class="row">
+        <div class="vwebsitePicture col-sm-12 margin-top-30">
+          <h3>弹出图片&nbsp;&nbsp;<span style="font-size: 14px;"><%= link_to '清空缓存', cleanup_ec_slides_path, data: {method: :post, confirm: '确定要清空缓存吗？'} %></span></h3>
+          <ul class="ace-thumbnails thumbnails-1" style='margin-top: -10px'>
+            <li>
+              <%= link_to 'javascript:;', data: {toggle: 'modals', title: '新增图片', width: '400', height: '500', iframe: new_ec_slide_path(slide_type: 3)} do %>
+                <div class="text text-block">
+                  <div class="inner">添加图片<br><i class="icon-plus"></i></div>
+                </div>
+              <% end %>
+            </li>
+            <% @ec_slides.pop_banner.each do |ec_slide| %>
+              <li>
+                <a href="javascript:;" title="<%= ec_slide.title %>" data-rel="colorbox">
+                  <img src="<%= ec_slide.pic_url %>" alt="">
+                  <div class="text">
+                    <div class="inner"><%= ec_slide.title %></div>
+                  </div>
+                </a>
+                <div class="tools">
+                  <a href="javascript:;">
+                    <i class="icon-trash btn-fa btn-remove"></i>
+                    <i class="icon-pencil btn-fa" data-toggle="modals" data-target="pictureModal" data-title="编辑图片" data-width="400" data-height="500" data-iframe="<%= edit_ec_slide_path(ec_slide) %>"></i>
+                  </a>
+                  <%= link_to '', ec_slide_path(ec_slide), data: {method: :delete, confirm: '确定要删除吗？'}, style: 'display: none;', class: 'remove-picture' %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+ -->
+      <div class="row col-md-12">
+        <div class="vwebsitePicture col-sm-12 margin-top-30">
+          <h3>展示模板</h3>
+
+          <%= form_for current_user, validate: true, html: { class: 'form width-800' } do |f| -%>
+            <table calss="table table-striped table-bordered table-hover" style="margin-top: 15px">
+              <tr>
+                <td style="width: 210px">
+                  <a href="http://zhishang.zhishangtech.top/FmFvq795O28Rw-JFEPfg_TGg_KSW" target="_blank"><img src="http://zhishang.zhishangtech.top/FmFvq795O28Rw-JFEPfg_TGg_KSW" alt="" style="width: 180px;height: 320px"></a>
+                </td>
+                <td>
+                  <a href="http://zhishang.zhishangtech.top/Fo4QRSSof9k3vMFCifhs-eBjJRgB.jpeg" target="_blank"><img src="http://zhishang.zhishangtech.top/Fo4QRSSof9k3vMFCifhs-eBjJRgB.jpeg" alt="" style="width: 180px;height: 320px"></a>
+                </td>
+              </tr> 
+              <tr style="text-align: center;height: 40px">
+                <td><label><%= f.radio_button :ec_template_id, 1, :checked => current_user.ec_template_id == 1 %>&nbsp;&nbsp;双列</label></td>
+                <td><label><%= f.radio_button :ec_template_id, 2, :checked => current_user.ec_template_id == 2 %>&nbsp;&nbsp;小图单列</label></td>
+              </tr>           
+            </table>  
+
+            <div class="form-group">
+              <input type="submit" class="btn btn-primary btn-sm" id="save_password" value="保存">
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<% content_for :custom_js do %>
+  <script type="text/javascript">
+    $('.btn-remove').click(function(){
+        $(this).closest('.tools').find('.remove-picture').click();
+    });
+    $(function(){
+        //$("#account_template").change(function(){
+        // if($(this).val() == "2"){
+        //   $(".ec_template").addClass("hide");
+        // }else{
+        //   $(".ec_template").removeClass("hide");
+        // }
+        // })
+      })
+  </script>
+<% end %>

@@ -1,0 +1,17 @@
+{
+    "code": 1,
+    "data":[
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"1法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50},
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"2法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50},
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"3法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50},
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"4法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50},
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"5法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50},
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"6法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50},
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"7法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50},
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"8法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50},
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"9法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50},
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"10法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50},
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"11法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50},
+    	{"imgsrc":"img/img06a.png","pid":3,"name":"12法国进口红酒 拉菲传奇波尔多干红葡萄酒","price":200.5,"sold":50}
+    ]
+}

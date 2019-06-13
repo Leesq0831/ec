@@ -1,2 +1,0 @@
-class TakeOutRule < BookRule
-end

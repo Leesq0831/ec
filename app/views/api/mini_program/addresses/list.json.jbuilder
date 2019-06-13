@@ -1,1 +1,0 @@
-json.array! @addresses, :id, :username, :mobile, :address, :is_default

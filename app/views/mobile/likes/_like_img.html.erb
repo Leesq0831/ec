@@ -1,6 +1,0 @@
-<% @like_images.each do |like_img| %>
-  <% img = like_img.user.try(:wx_user).try(:headimgurl_with_default) %>
-    <% if img %>
-      <%= image_tag img %>
-    <% end %>  
-<% end %>
